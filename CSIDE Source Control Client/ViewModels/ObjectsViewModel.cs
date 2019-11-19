@@ -19,10 +19,12 @@ namespace CSIDESourceControl.Client.ViewModels
         private IDialogService _dialogService;
         private ObservableCollection<NavObject> _navObjects;
         private string _destinationFolder;
+        private string _gitOutput;
 
         private RelayCommand<object> _showOpenFileDialog;
         private RelayCommand<object> _showSelectDestinationFolder;
         private RelayCommand<object> _gitCommit;
+        private RelayCommand<object> _gitInit;
         private RelayCommand<string[]> _importFiles;
 
         public ObjectsViewModel(IDialogService dialogService)
@@ -43,6 +45,12 @@ namespace CSIDESourceControl.Client.ViewModels
             set { _destinationFolder = value; OnPropertyChange("DestinationFolder"); }
         }
 
+        public string GitOutput
+        {
+            get { return _gitOutput; }
+            set { _gitOutput = value; OnPropertyChange("GitOutput"); }
+        }
+
         public ICommand GitCommitCommand
         {
             get
@@ -52,6 +60,18 @@ namespace CSIDESourceControl.Client.ViewModels
                     _gitCommit = new RelayCommand<object>(param => GitCommit(), param => true);
                 }
                 return _gitCommit;
+            }
+        }
+
+        public ICommand GitInitCommand
+        {
+            get
+            {
+                if (_gitInit == null)
+                {
+                    _gitInit = new RelayCommand<object>(param => GitInit(), param => true);
+                }
+                return _gitInit;
             }
         }
 
@@ -114,14 +134,11 @@ namespace CSIDESourceControl.Client.ViewModels
             if (filePaths == null)
                 return;
 
-            if (string.IsNullOrEmpty(DestinationFolder))
-                SelectDestinationFolder();
+            if (!IsDestinationFolderSet())
+                return;
 
             try
             {
-                if (string.IsNullOrEmpty(DestinationFolder))
-                    throw new Exception("No destination folder is selected");
-
                 if (filePaths.Length > 0)
                 {
                     ObjectsImport import = new ObjectsImport();
@@ -142,16 +159,43 @@ namespace CSIDESourceControl.Client.ViewModels
 
         public void GitCommit()
         {
-            try 
-            {
-                string output = GitProcess.Excecute(DestinationFolder, "init");
+            if (!IsDestinationFolderSet())
+                return;
 
-                _dialogService.ShowInformationMessage("Git", output);
+            try
+            {
+                string comment = "First Commit";
+                GitOutput = GitProcess.Excecute(DestinationFolder, "add --all");
+                GitOutput = GitProcess.Excecute(DestinationFolder, string.Format(@"commit -am ""\{0}\""", comment));
+
             }
             catch (Exception ex)
             {
-                _dialogService.ShowErrorMessage("Git Command Error", ex.Message);
+                _dialogService.ShowErrorMessage("Git Commit Error", ex.Message);
             }
+        }
+
+        public void GitInit()
+        {
+            if (!IsDestinationFolderSet())
+                return;
+
+            try
+            {
+                GitOutput = GitProcess.Excecute(DestinationFolder, "init");
+            }
+            catch (Exception ex)
+            {
+                _dialogService.ShowErrorMessage("Git Init Error", ex.Message);
+            }
+        }
+
+        private bool IsDestinationFolderSet()
+        {
+            if (string.IsNullOrEmpty(DestinationFolder))
+                SelectDestinationFolder();
+
+            return !string.IsNullOrEmpty(DestinationFolder);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
