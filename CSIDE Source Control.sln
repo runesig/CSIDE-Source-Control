@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29411.108
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSIDE Source Control", "CSIDE Source Control\CSIDE Source Control.csproj", "{95A76854-605A-4862-96EE-D40F1BBADC09}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSIDE Source Control Client", "CSIDE Source Control Client\CSIDE Source Control Client.csproj", "{39B02DC2-6852-4132-8970-730AEF377D24}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{95A76854-605A-4862-96EE-D40F1BBADC09}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{95A76854-605A-4862-96EE-D40F1BBADC09}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{95A76854-605A-4862-96EE-D40F1BBADC09}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{95A76854-605A-4862-96EE-D40F1BBADC09}.Release|Any CPU.Build.0 = Release|Any CPU
+		{39B02DC2-6852-4132-8970-730AEF377D24}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{39B02DC2-6852-4132-8970-730AEF377D24}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{39B02DC2-6852-4132-8970-730AEF377D24}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{39B02DC2-6852-4132-8970-730AEF377D24}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C0598029-500E-47F4-B512-392B55B9379F}
+	EndGlobalSection
+EndGlobal
