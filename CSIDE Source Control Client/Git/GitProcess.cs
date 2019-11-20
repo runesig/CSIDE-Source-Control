@@ -57,7 +57,7 @@ namespace CSIDESourceControl.Client.Git
             if ((!string.IsNullOrEmpty(standardOutput)) && (string.IsNullOrEmpty(standardError)))
                 return standardOutput;
 
-            return string.Empty;
+            return string.Format("{0}\n{1}", standardOutput, standardError);
         }
     }
 }

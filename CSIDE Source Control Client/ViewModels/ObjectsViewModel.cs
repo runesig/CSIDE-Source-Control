@@ -71,7 +71,6 @@ namespace CSIDESourceControl.Client.ViewModels
             set { _gitCommitMessage = value; OnPropertyChange("GitCommitMessage"); }
         }
         
-
         public ICommand GitCommitCommand
         {
             get
@@ -223,8 +222,11 @@ namespace CSIDESourceControl.Client.ViewModels
             {
                 if (filePaths.Length > 0)
                 {
+                    string filePath = filePaths[0];
                     ObjectsImport import = new ObjectsImport();
-                    import.RunImport(filePaths[0]);
+                    import.RunImport(filePath);
+
+                    GitOutput = string.Format("Added file: {0}", filePath);
 
                     // Removes everything and adds new objects
                     NavObjects = new ObservableCollection<NavObject>(import.NavObjects.Values);
@@ -254,6 +256,8 @@ namespace CSIDESourceControl.Client.ViewModels
 
                 GitProcess.Excecute(DestinationFolder, string.Format(@"commit -am ""{0}""", GitCommitMessage), out output);
                 GitOutput = output;
+
+                GitCommitMessage = string.Empty;
 
                 CheckGitOutput(output);
             }
@@ -309,15 +313,10 @@ namespace CSIDESourceControl.Client.ViewModels
                 GitProcess.Excecute(DestinationFolder, "pull origin master", out string output);
                 GitOutput = output;
 
-                GitProcess.Excecute(DestinationFolder, "push", out output);
-                GitOutput = output;
-
-                GitProcess.Wait();
-
-                GitProcess.Excecute(DestinationFolder, "status", out output);
-                GitOutput = output;
-
-                GitStatus();
+                if (GitProcess.Excecute(DestinationFolder, "push", out output) == 0)
+                    GitOutput = string.Format("Succesfully pulled and pushed from server\n {0}", output);
+                else
+                    GitOutput = output;
             }
             catch (Exception ex)
             {
@@ -335,7 +334,6 @@ namespace CSIDESourceControl.Client.ViewModels
                 GitProcess.Excecute(DestinationFolder, "push --set-upstream origin master", out string output);
                 GitOutput = output;
 
-                GitStatus();
             }
             catch (Exception ex)
             {
@@ -373,9 +371,10 @@ namespace CSIDESourceControl.Client.ViewModels
 
                 try
                 {
-                    GitProcess.Excecute(DestinationFolder, string.Format(@"remote add origin {0}", remoteUrl), out string output);
-
-                    GitOutput = output;
+                    if(GitProcess.Excecute(DestinationFolder, string.Format(@"remote add origin {0}", remoteUrl), out string output) == 0)
+                        GitOutput = string.Format("Succesfully added remote server\n {0}", output);
+                    else
+                        GitOutput = output;
                     GitGetRemote();
                 }
                 catch (Exception ex)

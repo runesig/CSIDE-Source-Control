@@ -25,7 +25,7 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
                 <RowDefinition Height="5" />
-                <RowDefinition Height="*" />
+                <RowDefinition Height="3*" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
@@ -64,39 +64,39 @@
 
             <!-- Search Grid Start -->
             <Grid Grid.Column="0" Grid.Row="1">
-                <!-- Margin="0,0,20,0"-->
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="150" />
-                    <ColumnDefinition Width="200" />
+                    <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
 
-                <!--<ComboBox x:Name="showComboBox" Grid.Column="0" Grid.Row="0" Margin="10,10,3,10" MinWidth="200" Width="Auto"/>-->
-                <TextBox x:Name="fieldFilterTextBox" Grid.Column="3" Grid.Row="0" Margin="3,10,3,10" MinWidth="100" Width="Auto"/>
-                <ComboBox x:Name="fieldFilterComboBox" Grid.Column="4" Grid.Row="0" Margin="3,10,10,10"  />
-                <Label x:Name="commitLabel" Grid.Column="0" Grid.Row="1" Margin="10,10,3,10" Width="Auto" Content="Commit Message" />
-                <TextBox x:Name="commitMessageTextBox" Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="2" Margin="3,10,3,10" Width="300" Text="{Binding GitCommitMessage}"/>
-                <Button x:Name="commitButton" Grid.Column="12" Grid.Row="1" Content="Commit" Command="{Binding GitCommitCommand}" />
+                <!-- <ComboBox x:Name="showComboBox" Grid.Column="0" Grid.Row="0" Margin="10,10,3,10" MinWidth="200" Width="Auto"/> -->
+                <!-- <TextBox x:Name="fieldFilterTextBox" Grid.Column="3" Grid.Row="0" Margin="3,10,3,10" MinWidth="100" Width="Auto"/> -->
+                <!-- <ComboBox x:Name="fieldFilterComboBox" Grid.Column="4" Grid.Row="0" Margin="3,10,10,10"  /> -->
                 
-                <ScrollViewer Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="5" MinHeight="60" Margin="10,10,3,10">
-                    <TextBlock x:Name="gitOutPut"  Text="{Binding GitOutput}" HorizontalAlignment="Left" />
+                <Grid Grid.Column="0" Grid.Row="0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Label x:Name="commitLabel" Grid.Row="0" Grid.Column="0" Height="25" Margin="10,10,3,10" Content="Commit Message" />
+                    <TextBox x:Name="commitMessageTextBox" Grid.Row="0" Grid.Column="1"  MinWidth="300" Height="25" Margin="3,10,3,10" Text="{Binding GitCommitMessage}"/>
+                    <Button x:Name="commitButton" Grid.Row="0" Grid.Column="2" Content="Commit" Height="25" Width="80" Margin="3,3,3,3" Command="{Binding GitCommitCommand}" />
+                    <Button x:Name="syncButton" Grid.Row="0" Grid.Column="3" Content="Sync" Height="25" Width="80" Margin="3,3,3,3" Command="{Binding GitSyncCommand}" />
+                </Grid>
+
+                <ScrollViewer Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="3" Margin="23,3,10,3" Background="{DynamicResource BackgroundBrushClear}">
+                    <TextBlock x:Name="gitOutPut"  Text="{Binding GitOutput}" HorizontalAlignment="Left" FontWeight="Bold"/>
                 </ScrollViewer>
-
-
-
-                <!--<Grid Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="5">
-                    <GridSplitter Grid.Row="1" Grid.ColumnSpan="2" ResizeDirection="Rows" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Height="4" BorderThickness="0,0,0,1" BorderBrush="Gray" Background="Transparent"/>
-                    <TextBox x:Name="gitOutPut" Grid.Row="2" Grid.Column="0" Margin="20,10,20,10" VerticalScrollBarVisibility="Auto" TextWrapping="Wrap" Text="{Binding GitOutput}"/>
-                    <GridSplitter Grid.Row="2" Grid.ColumnSpan="2" ResizeDirection="Rows" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Height="4" BorderThickness="0,0,0,1" BorderBrush="Gray" Background="Transparent"/>
-                </Grid>-->
-
             </Grid>
             <!-- Search Grid Stop -->
 

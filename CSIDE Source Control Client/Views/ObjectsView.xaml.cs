@@ -31,7 +31,7 @@ namespace CSIDESourceControl.Client
 
             DataContext = _viewModel;
 
-            AddFilterFieldsComboBoxItems(comparedDataGrid, ref fieldFilterComboBox);
+            // AddFilterFieldsComboBoxItems(comparedDataGrid, ref fieldFilterComboBox);
         }
 
         private void comparedDataGrid_Drop(object sender, DragEventArgs e)
