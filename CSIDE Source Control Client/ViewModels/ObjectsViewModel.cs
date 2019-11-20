@@ -312,7 +312,12 @@ namespace CSIDESourceControl.Client.ViewModels
                 GitProcess.Excecute(DestinationFolder, "push", out output);
                 GitOutput = output;
 
-                CheckGitOutput(output);
+                GitProcess.Wait();
+
+                GitProcess.Excecute(DestinationFolder, "status", out output);
+                GitOutput = output;
+
+                GitStatus();
             }
             catch (Exception ex)
             {
@@ -327,10 +332,10 @@ namespace CSIDESourceControl.Client.ViewModels
 
             try
             {
-                GitProcess.Excecute(DestinationFolder, "push", out string output);
+                GitProcess.Excecute(DestinationFolder, "push --set-upstream origin master", out string output);
                 GitOutput = output;
 
-                CheckGitOutput(output);
+                GitStatus();
             }
             catch (Exception ex)
             {
@@ -348,7 +353,7 @@ namespace CSIDESourceControl.Client.ViewModels
                 GitProcess.Excecute(DestinationFolder, "pull origin master", out string output);
                 GitOutput = output;
 
-                CheckGitOutput(output);
+                GitStatus();
             }
             catch (Exception ex)
             {

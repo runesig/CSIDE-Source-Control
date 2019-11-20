@@ -42,6 +42,10 @@ namespace CSIDESourceControl.Client.Git
             }
         }
 
+        public static void Wait()
+        {
+            Thread.Sleep(TimeSpan.FromSeconds(1));
+        }
         private static string CheckOutputString(string standardOutput, string standardError)
         {
             if (standardError.Contains("fatal:"))
@@ -53,7 +57,7 @@ namespace CSIDESourceControl.Client.Git
             if ((!string.IsNullOrEmpty(standardOutput)) && (string.IsNullOrEmpty(standardError)))
                 return standardOutput;
 
-            return "Unknown status";
+            return string.Empty;
         }
     }
 }
