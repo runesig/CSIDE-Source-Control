@@ -9,6 +9,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
@@ -16,18 +17,25 @@ namespace CSIDESourceControl.Client.ViewModels
 {
     public class ObjectsViewModel : INotifyPropertyChanged
     {
-        private IDialogService _dialogService;
+        private IObjectsViewDialogService _dialogService;
         private ObservableCollection<NavObject> _navObjects;
         private string _destinationFolder;
         private string _gitOutput;
+        private string _gitRemoteUrl;
+        private string _gitCommitMessage;
 
         private RelayCommand<object> _showOpenFileDialog;
         private RelayCommand<object> _showSelectDestinationFolder;
         private RelayCommand<object> _gitCommit;
         private RelayCommand<object> _gitInit;
+        private RelayCommand<object> _gitSetremote;
+        private RelayCommand<object> _gitStatus;
+        private RelayCommand<object> _gitPull;
+        private RelayCommand<object> _gitPush;
+        private RelayCommand<object> _gitSync;
         private RelayCommand<string[]> _importFiles;
 
-        public ObjectsViewModel(IDialogService dialogService)
+        public ObjectsViewModel(IObjectsViewDialogService dialogService)
         {
             _dialogService = dialogService;
             _navObjects = new ObservableCollection<NavObject>();
@@ -45,11 +53,24 @@ namespace CSIDESourceControl.Client.ViewModels
             set { _destinationFolder = value; OnPropertyChange("DestinationFolder"); }
         }
 
+        public string GitRemoteUrl
+        {
+            get { return _gitRemoteUrl; }
+            set { _gitRemoteUrl = value; OnPropertyChange("GitRemoteUrl"); }
+        }
+
         public string GitOutput
         {
             get { return _gitOutput; }
             set { _gitOutput = value; OnPropertyChange("GitOutput"); }
         }
+
+        public string GitCommitMessage
+        {
+            get { return _gitCommitMessage; }
+            set { _gitCommitMessage = value; OnPropertyChange("GitCommitMessage"); }
+        }
+        
 
         public ICommand GitCommitCommand
         {
@@ -72,6 +93,66 @@ namespace CSIDESourceControl.Client.ViewModels
                     _gitInit = new RelayCommand<object>(param => GitInit(), param => true);
                 }
                 return _gitInit;
+            }
+        }
+
+        public ICommand GitSetRemoteCommand
+        {
+            get
+            {
+                if (_gitSetremote == null)
+                {
+                    _gitSetremote = new RelayCommand<object>(param => GitSetRemote(), param => true);
+                }
+                return _gitSetremote;
+            }
+        }
+
+        public ICommand GitStatusCommand
+        {
+            get
+            {
+                if (_gitStatus == null)
+                {
+                    _gitStatus = new RelayCommand<object>(param => GitStatus(), param => true);
+                }
+                return _gitStatus;
+            }
+        }
+
+        public ICommand GitSyncCommand
+        {
+            get
+            {
+                if (_gitSync == null)
+                {
+                    _gitSync = new RelayCommand<object>(param => GitSync(), param => true);
+                }
+                return _gitSync;
+            }
+        }
+
+        public ICommand GitPushCommand
+        {
+            get
+            {
+                if (_gitPush == null)
+                {
+                    _gitPush = new RelayCommand<object>(param => GitPush(), param => true);
+                }
+                return _gitPush;
+            }
+        }
+
+        public ICommand GitPullCommand
+        {
+            get
+            {
+                if (_gitPull == null)
+                {
+                    _gitPull = new RelayCommand<object>(param => GitPull(), param => true);
+                }
+                return _gitPull;
             }
         }
 
@@ -110,7 +191,6 @@ namespace CSIDESourceControl.Client.ViewModels
             }
         }
 
-
         private void OpenFileDialog()
         {
             string[] filePaths = null;
@@ -127,6 +207,8 @@ namespace CSIDESourceControl.Client.ViewModels
 
             if (_dialogService.GetFolder("Select Destination Folder", out path))
                 DestinationFolder = path;
+
+            GitGetRemote();
         }
 
         private void ImportFiles(string[] filePaths)
@@ -164,10 +246,16 @@ namespace CSIDESourceControl.Client.ViewModels
 
             try
             {
-                string comment = "First Commit";
-                GitOutput = GitProcess.Excecute(DestinationFolder, "add --all");
-                GitOutput = GitProcess.Excecute(DestinationFolder, string.Format(@"commit -am ""\{0}\""", comment));
+                if (string.IsNullOrEmpty(GitCommitMessage))
+                    throw new Exception("Commit message can't be empty.");
 
+                GitProcess.Excecute(DestinationFolder, "add --all", out string output);
+                GitOutput = output;
+
+                GitProcess.Excecute(DestinationFolder, string.Format(@"commit -am ""{0}""", GitCommitMessage), out output);
+                GitOutput = output;
+
+                CheckGitOutput(output);
             }
             catch (Exception ex)
             {
@@ -182,12 +270,134 @@ namespace CSIDESourceControl.Client.ViewModels
 
             try
             {
-                GitOutput = GitProcess.Excecute(DestinationFolder, "init");
+                GitProcess.Excecute(DestinationFolder, "init", out string output);
+
+                CheckGitOutput(output);
+                GitOutput = output;
             }
             catch (Exception ex)
             {
                 _dialogService.ShowErrorMessage("Git Init Error", ex.Message);
             }
+        }
+
+        public void GitStatus()
+        {
+            if (!IsDestinationFolderSet())
+                return;
+
+            try
+            {
+                GitProcess.Excecute(DestinationFolder, "status", out string output);
+
+                CheckGitOutput(output);
+                GitOutput = output;
+            }
+            catch (Exception ex)
+            {
+                _dialogService.ShowErrorMessage("Git Status Error", ex.Message);
+            }
+        }
+
+        public void GitSync()
+        {
+            if (!IsDestinationFolderSet())
+                return;
+
+            try
+            {
+                GitProcess.Excecute(DestinationFolder, "pull origin master", out string output);
+                GitOutput = output;
+
+                GitProcess.Excecute(DestinationFolder, "push", out output);
+                GitOutput = output;
+
+                CheckGitOutput(output);
+            }
+            catch (Exception ex)
+            {
+                _dialogService.ShowErrorMessage("Git Status Error", ex.Message);
+            }
+        }
+
+        public void GitPush()
+        {
+            if (!IsDestinationFolderSet())
+                return;
+
+            try
+            {
+                GitProcess.Excecute(DestinationFolder, "push", out string output);
+                GitOutput = output;
+
+                CheckGitOutput(output);
+            }
+            catch (Exception ex)
+            {
+                _dialogService.ShowErrorMessage("Git Push Error", ex.Message);
+            }
+        }
+
+        public void GitPull()
+        {
+            if (!IsDestinationFolderSet())
+                return;
+
+            try
+            {
+                GitProcess.Excecute(DestinationFolder, "pull origin master", out string output);
+                GitOutput = output;
+
+                CheckGitOutput(output);
+            }
+            catch (Exception ex)
+            {
+                _dialogService.ShowErrorMessage("Git Pull Error", ex.Message);
+            }
+        }
+
+        public void GitSetRemote()
+        {
+            if (!IsDestinationFolderSet())
+                return;
+
+            if (_dialogService.SetRemote(out string remoteUrl))
+            {
+                if (string.IsNullOrEmpty(remoteUrl))
+                    return;
+
+                try
+                {
+                    GitProcess.Excecute(DestinationFolder, string.Format(@"remote add origin {0}", remoteUrl), out string output);
+
+                    GitOutput = output;
+                    GitGetRemote();
+                }
+                catch (Exception ex)
+                {
+                    _dialogService.ShowErrorMessage("Git Status Error", ex.Message);
+                }
+            }
+        }
+
+        private void GitGetRemote()
+        {
+            try
+            {
+                GitProcess.Excecute(DestinationFolder, string.Format(@"config --get remote.origin.url"), out string output);
+                GitRemoteUrl = Regex.Replace(output, @"\t|\n|\r", string.Empty);
+            }
+            catch (Exception ex)
+            {
+                _dialogService.ShowErrorMessage("Git Status Error", ex.Message);
+            }
+        }
+
+
+        private void CheckGitOutput(string output)
+        {
+            if (string.IsNullOrEmpty(output))
+                _dialogService.ShowErrorMessage("Git Command Failed", "Something went wrong. Please check if Git is properly initialized and command is correct.");
         }
 
         private bool IsDestinationFolderSet()

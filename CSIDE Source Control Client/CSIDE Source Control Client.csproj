@@ -59,13 +59,17 @@
     <Compile Include="Commands\RelayCommand.cs" />
     <Compile Include="Git\GitProcess.cs" />
     <Compile Include="Helpers\ComboBoxItem.cs" />
+    <Compile Include="ViewModels\RemoteViewModel.cs" />
     <Compile Include="Views\ObjectsView.xaml.cs">
       <DependentUpon>ObjectsView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Service\IDialogService.cs" />
-    <Compile Include="Service\DialogService.cs" />
+    <Compile Include="Service\IObjectsViewDialogService.cs" />
+    <Compile Include="Service\ObjectsViewDialogService.cs" />
     <Compile Include="ViewModels\MyViewModel.cs" />
     <Compile Include="ViewModels\ObjectsViewModel.cs" />
+    <Compile Include="Views\RemoteView.xaml.cs">
+      <DependentUpon>RemoteView.xaml</DependentUpon>
+    </Compile>
     <Page Include="Views\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -79,6 +83,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="Views\ObjectsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\RemoteView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

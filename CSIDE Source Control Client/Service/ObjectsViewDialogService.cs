@@ -1,4 +1,6 @@
-﻿using Microsoft.Win32;
+﻿using CSIDESourceControl.Client.ViewModels;
+using CSIDESourceControl.Client.Views;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +10,7 @@ using System.Windows;
 
 namespace CSIDESourceControl.Client.Service
 {
-    public class DialogService : IDialogService
+    public class ObjectsViewDialogService : IObjectsViewDialogService
     {
         public void ShowInformationMessage(string caption, string text)
         {
@@ -74,6 +76,22 @@ namespace CSIDESourceControl.Client.Service
             {
                 ShowErrorMessage("Error", ex.Message);
             }
+
+            return false;
+        }
+
+        public bool SetRemote(out string remoteurl)
+        {
+            RemoteViewModel viewModel = new RemoteViewModel();
+
+            RemoteView remote = new RemoteView();
+            remote.DataContext = viewModel;
+
+            bool? dialogResult = remote.ShowDialog();
+            remoteurl = viewModel.RemoteUrl;
+
+            if (dialogResult.HasValue)
+                return dialogResult.Value;
 
             return false;
         }

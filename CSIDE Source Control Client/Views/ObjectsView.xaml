@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CSIDESourceControl.Client"
         mc:Ignorable="d"
-        Title="ObjectsView">
+        Title="C/SIDE Source Control">
         <Window.Resources>
             <SolidColorBrush x:Key="BackgroundBrushClear" Color="White" />
             <SolidColorBrush x:Key="BackgroundBrushUnequal" Color="Salmon" />
@@ -16,35 +16,54 @@
             <SolidColorBrush x:Key="ForegroundBrushClear" Color="Black" />
         </Window.Resources>
     <DockPanel>
-        <StackPanel DockPanel.Dock="Top">
-            <!--Menu Start-->
-            <Menu DockPanel.Dock="Top" Width="Auto" Height="20" Background="{DynamicResource BackgroundBrushClear}">
-                <MenuItem Header="_File">
-                    <MenuItem x:Name="_Import" Header="Import" Command="{Binding Path=ShowOpenFileDialog}" />
-                    <MenuItem x:Name="DestinationFolder" Header="_Select Destination Folder" Command="{Binding Path=ShowSelectDestinationFolder}" />
-                    <Separator />
-                    <MenuItem Header="_Exit" />
-                </MenuItem>
-                <MenuItem Header="_Git">
-                    <MenuItem x:Name="Commmit" Header="_Commit" HorizontalAlignment="Left" Width="Auto" Command="{Binding Path=GitCommitCommand}"/>
-                    <MenuItem x:Name="Sync" Header="_Sync" HorizontalAlignment="Left" Width="Auto" />
-                    <Separator />
-                    <MenuItem x:Name="Init" Header="_Init" HorizontalAlignment="Left" Width="Auto" Command="{Binding Path=GitInitCommand}"/>
-                </MenuItem>
-                <MenuItem Header="_Edit">
-                    <MenuItem x:Name="SelectAll" Header="Select _All" HorizontalAlignment="Left" Width="Auto" />
-                    <MenuItem x:Name="DeSelectAll" Header="_Deselect All" HorizontalAlignment="Left" Width="Auto" />
-                    <Separator />
-                    <MenuItem x:Name="Options" Header="_Options" HorizontalAlignment="Left" Width="Auto"/>
-                </MenuItem>
-                <MenuItem Header="_Help">
-                    <MenuItem x:Name="About" Header="_About" HorizontalAlignment="Left" Width="Auto"/>
-                </MenuItem>
-            </Menu>
-            <!--Menu End-->
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="5" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+
+            <StackPanel Grid.Column="0" Grid.Row="0">
+                <!--Menu Start-->
+                <Menu Width="Auto" Height="20" Background="{DynamicResource BackgroundBrushClear}">
+                    <MenuItem Header="_File">
+                        <MenuItem x:Name="_Import" Header="Import" Command="{Binding Path=ShowOpenFileDialog}" />
+                        <MenuItem x:Name="DestinationFolder" Header="_Select Destination Folder" Command="{Binding Path=ShowSelectDestinationFolder}" />
+                        <Separator />
+                        <MenuItem Header="_Exit" />
+                    </MenuItem>
+                    <MenuItem Header="_Git">
+                        <MenuItem x:Name="Commmit" Header="_Commit" HorizontalAlignment="Left" Width="Auto" Command="{Binding Path=GitCommitCommand}"/>
+                        <MenuItem x:Name="Push" Header="_Push" HorizontalAlignment="Left" Width="Auto" Command="{Binding Path=GitPushCommand}"/>
+                        <MenuItem x:Name="Pull" Header="P_ull" HorizontalAlignment="Left" Width="Auto" Command="{Binding Path=GitPullCommand}"/>
+                        <MenuItem x:Name="Sync" Header="_Sync" HorizontalAlignment="Left" Width="Auto" Command="{Binding Path=GitSyncCommand}"/>
+                        <Separator />
+                        <MenuItem x:Name="Status" Header="S_tatus" HorizontalAlignment="Left" Width="Auto" Command="{Binding Path=GitStatusCommand}"/>
+                        <MenuItem x:Name="SetRemote" Header="Set _Remote" HorizontalAlignment="Left" Width="Auto" Command="{Binding Path=GitSetRemoteCommand}"/>
+                        <MenuItem x:Name="Init" Header="_Init" HorizontalAlignment="Left" Width="Auto" Command="{Binding Path=GitInitCommand}"/>
+                    </MenuItem>
+                    <MenuItem Header="_Edit">
+                        <MenuItem x:Name="SelectAll" Header="Select _All" HorizontalAlignment="Left" Width="Auto" />
+                        <MenuItem x:Name="DeSelectAll" Header="_Deselect All" HorizontalAlignment="Left" Width="Auto" />
+                        <Separator />
+                        <MenuItem x:Name="Options" Header="_Options" HorizontalAlignment="Left" Width="Auto"/>
+                    </MenuItem>
+                    <MenuItem Header="_Help">
+                        <MenuItem x:Name="About" Header="_About" HorizontalAlignment="Left" Width="Auto"/>
+                    </MenuItem>
+                </Menu>
+                <!--Menu End-->
+            </StackPanel>
 
             <!-- Search Grid Start -->
-            <Grid DockPanel.Dock="Top">
+            <Grid Grid.Column="0" Grid.Row="1">
                 <!-- Margin="0,0,20,0"-->
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
@@ -63,211 +82,222 @@
                 <TextBox x:Name="fieldFilterTextBox" Grid.Column="3" Grid.Row="0" Margin="3,10,3,10" MinWidth="100" Width="Auto"/>
                 <ComboBox x:Name="fieldFilterComboBox" Grid.Column="4" Grid.Row="0" Margin="3,10,10,10"  />
                 <Label x:Name="commitLabel" Grid.Column="0" Grid.Row="1" Margin="10,10,3,10" Width="Auto" Content="Commit Message" />
-                <TextBox x:Name="commitMessageTextBox" Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="2" Margin="3,10,3,10" Width="Auto" Text="{Binding CommitMessage}"/>
-
-                <ScrollViewer Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="5" Height="60" Margin="10,10,3,10">
+                <TextBox x:Name="commitMessageTextBox" Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="2" Margin="3,10,3,10" Width="300" Text="{Binding GitCommitMessage}"/>
+                <Button x:Name="commitButton" Grid.Column="12" Grid.Row="1" Content="Commit" Command="{Binding GitCommitCommand}" />
+                
+                <ScrollViewer Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="5" MinHeight="60" Margin="10,10,3,10">
                     <TextBlock x:Name="gitOutPut"  Text="{Binding GitOutput}" HorizontalAlignment="Left" />
                 </ScrollViewer>
-                
-              
+
+
 
                 <!--<Grid Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="5">
                     <GridSplitter Grid.Row="1" Grid.ColumnSpan="2" ResizeDirection="Rows" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Height="4" BorderThickness="0,0,0,1" BorderBrush="Gray" Background="Transparent"/>
                     <TextBox x:Name="gitOutPut" Grid.Row="2" Grid.Column="0" Margin="20,10,20,10" VerticalScrollBarVisibility="Auto" TextWrapping="Wrap" Text="{Binding GitOutput}"/>
                     <GridSplitter Grid.Row="2" Grid.ColumnSpan="2" ResizeDirection="Rows" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Height="4" BorderThickness="0,0,0,1" BorderBrush="Gray" Background="Transparent"/>
                 </Grid>-->
-                
+
             </Grid>
             <!-- Search Grid Stop -->
-        </StackPanel>
 
-        <!--Statusbar Start-->
-        <StatusBar DockPanel.Dock="Bottom" Background="{DynamicResource BackgroundBrushClear}">
-            <StatusBar.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="100" />
-                        </Grid.ColumnDefinitions>
-                    </Grid>
-                </ItemsPanelTemplate>
-            </StatusBar.ItemsPanel>
-            <StatusBarItem Grid.Column="0">
-                <TextBlock x:Name="DestFolder" Text="{Binding DestinationFolder}"  />
-            </StatusBarItem>
-            <Separator Grid.Column="1" />
-            <StatusBarItem Grid.Column="2">
-                <ProgressBar x:Name="ProcessProgessBar" Value="50" Width="90" Height="16" />
-            </StatusBarItem>
-            <StatusBarItem Grid.Column="2">
-                <TextBlock x:Name="GridRowCountTextBox" Text="Empty" />
-            </StatusBarItem>
-        </StatusBar>
-        <!--Statusbar End-->
+            <GridSplitter Grid.Column="0" Grid.Row="2" Height="5" HorizontalAlignment="Stretch" />
 
-        <!--Datagrid Start-->
-        <DataGrid Name="comparedDataGrid" 
+            <!--Datagrid Start-->
+            <DataGrid Grid.Column="0" Grid.Row="3" HorizontalAlignment="Center"
+                  Name="comparedDataGrid" 
                   ItemsSource="{Binding NavObjects}" 
                   Background="{DynamicResource BackgroundBrushClear}" 
                   AutoGenerateColumns="False" 
                   CanUserAddRows="False" 
                   AllowDrop="True"
                   Drop="comparedDataGrid_Drop">
-            <DataGrid.RowStyle>
-                <Style TargetType="DataGridRow">
-                    <!--<EventSetter Event="MouseDoubleClick" />-->
-                </Style>
-            </DataGrid.RowStyle>
-                
-            <DataGrid.ContextMenu>
-                <ContextMenu>
-                    <ContextMenu.ItemsSource>
-                        <CompositeCollection>
-                            <MenuItem x:Name="Copy" Header="Copy" />
-                            <MenuItem x:Name="FilterToValue" Header="Filter To This Value" />
-                        </CompositeCollection>
-                    </ContextMenu.ItemsSource>
-                </ContextMenu>
-            </DataGrid.ContextMenu>
-                
-            <DataGrid.Columns>
-                <!-- 'Select' Start-->
-                <DataGridTemplateColumn Header="Select" IsReadOnly="False" Width="60">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <CheckBox HorizontalAlignment="Center" VerticalAlignment="Center" IsChecked="{Binding Selected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                    <DataGridTemplateColumn.CellStyle>
-                        <Style TargetType="DataGridCell">
-                            <Setter Property="Background" Value="{StaticResource BackgroundBrushClear}" />
-                            <Style.Triggers>
-                                <Trigger Property="IsSelected" Value="True">
-                                    <Setter Property="Background" Value="{StaticResource BackgroundBrushSelected}"/>
-                                    <Setter Property="Foreground" Value="{StaticResource ForegroundBrushClear}" />
-                                </Trigger>
-                            </Style.Triggers>
-                        </Style>
-                    </DataGridTemplateColumn.CellStyle>
-                </DataGridTemplateColumn>
-                <!-- 'Select' Stop -->
+                <DataGrid.RowStyle>
+                    <Style TargetType="DataGridRow">
+                        <!--<EventSetter Event="MouseDoubleClick" />-->
+                    </Style>
+                </DataGrid.RowStyle>
 
-                <!-- 'Id' Start-->
-                <DataGridTextColumn Header="Id" Binding="{Binding Id}" IsReadOnly="True" Width="80">
-                    <DataGridTextColumn.CellStyle>
-                        <Style TargetType="DataGridCell">
-                            <Setter Property="Background" Value="{StaticResource BackgroundBrushClear}" />
-                            <Style.Triggers>
-                                <Trigger Property="IsSelected" Value="True">
-                                    <Setter Property="Background" Value="{StaticResource BackgroundBrushSelected}" />
-                                    <Setter Property="Foreground" Value="{StaticResource ForegroundBrushClear}" />
-                                </Trigger>
-                            </Style.Triggers>
-                        </Style>
-                    </DataGridTextColumn.CellStyle>
-                </DataGridTextColumn>
-                <!-- 'Id' Stop-->
+                <DataGrid.ContextMenu>
+                    <ContextMenu>
+                        <ContextMenu.ItemsSource>
+                            <CompositeCollection>
+                                <MenuItem x:Name="Copy" Header="Copy" />
+                                <MenuItem x:Name="FilterToValue" Header="Filter To This Value" />
+                            </CompositeCollection>
+                        </ContextMenu.ItemsSource>
+                    </ContextMenu>
+                </DataGrid.ContextMenu>
 
-                <!-- 'Type' Start-->
-                <DataGridTextColumn Header="Type" Binding="{Binding Type}" IsReadOnly="True" Width="100">
-                    <DataGridTextColumn.CellStyle>
-                        <Style TargetType="DataGridCell">
-                            <Setter Property="Background" Value="{StaticResource BackgroundBrushClear}" />
-                            <Style.Triggers>
-                                <Trigger Property="IsSelected" Value="True">
-                                    <Setter Property="Background" Value="{StaticResource BackgroundBrushSelected}"/>
-                                    <Setter Property="Foreground" Value="{StaticResource ForegroundBrushClear}" />
-                                </Trigger>
-                            </Style.Triggers>
-                        </Style>
-                    </DataGridTextColumn.CellStyle>
-                </DataGridTextColumn>
-                <!-- 'Type' Stop-->
+                <DataGrid.Columns>
+                    <!-- 'Select' Start-->
+                    <DataGridTemplateColumn Header="Select" IsReadOnly="False" Width="60">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <CheckBox HorizontalAlignment="Center" VerticalAlignment="Center" IsChecked="{Binding Selected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                        <DataGridTemplateColumn.CellStyle>
+                            <Style TargetType="DataGridCell">
+                                <Setter Property="Background" Value="{StaticResource BackgroundBrushClear}" />
+                                <Style.Triggers>
+                                    <Trigger Property="IsSelected" Value="True">
+                                        <Setter Property="Background" Value="{StaticResource BackgroundBrushSelected}"/>
+                                        <Setter Property="Foreground" Value="{StaticResource ForegroundBrushClear}" />
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </DataGridTemplateColumn.CellStyle>
+                    </DataGridTemplateColumn>
+                    <!-- 'Select' Stop -->
 
-                <!-- 'Name' Start-->
-                <DataGridTextColumn Header="Name" Binding="{Binding Name}" IsReadOnly="True" Width="*">
-                    <DataGridTextColumn.CellStyle>
-                        <Style TargetType="DataGridCell">
-                            <Setter Property="Background" Value="{StaticResource BackgroundBrushClear}" />
-                            <Style.Triggers>
-                                <Trigger Property="IsSelected" Value="True">
-                                    <Setter Property="Background" Value="{StaticResource BackgroundBrushSelected}"/>
-                                    <Setter Property="Foreground" Value="{StaticResource ForegroundBrushClear}" />
-                                </Trigger>
-                            </Style.Triggers>
-                        </Style>
-                    </DataGridTextColumn.CellStyle>
-                </DataGridTextColumn>
-                <!-- 'Name' Stop-->
+                    <!-- 'Id' Start-->
+                    <DataGridTextColumn Header="Id" Binding="{Binding Id}" IsReadOnly="True" Width="80">
+                        <DataGridTextColumn.CellStyle>
+                            <Style TargetType="DataGridCell">
+                                <Setter Property="Background" Value="{StaticResource BackgroundBrushClear}" />
+                                <Style.Triggers>
+                                    <Trigger Property="IsSelected" Value="True">
+                                        <Setter Property="Background" Value="{StaticResource BackgroundBrushSelected}" />
+                                        <Setter Property="Foreground" Value="{StaticResource ForegroundBrushClear}" />
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </DataGridTextColumn.CellStyle>
+                    </DataGridTextColumn>
+                    <!-- 'Id' Stop-->
 
-                <!-- 'Date' Start-->
-                <DataGridTextColumn Header="Date" Binding="{Binding StringDate}" IsReadOnly="True" Width="*">
-                    <DataGridTextColumn.CellStyle>
-                        <Style TargetType="DataGridCell">
-                            <Setter Property="Background" Value="{StaticResource BackgroundBrush}" />
-                            <Style.Triggers>
-                                <Trigger Property="IsSelected" Value="True">
-                                    <Setter Property="Background" Value="{StaticResource BackgroundBrushSelected}"/>
-                                    <Setter Property="Foreground" Value="{StaticResource ForegroundBrushClear}" />
-                                </Trigger>
-                            </Style.Triggers>
-                        </Style>
-                    </DataGridTextColumn.CellStyle>
-                </DataGridTextColumn>
-                <!-- 'Date' Stop-->
+                    <!-- 'Type' Start-->
+                    <DataGridTextColumn Header="Type" Binding="{Binding Type}" IsReadOnly="True" Width="100">
+                        <DataGridTextColumn.CellStyle>
+                            <Style TargetType="DataGridCell">
+                                <Setter Property="Background" Value="{StaticResource BackgroundBrushClear}" />
+                                <Style.Triggers>
+                                    <Trigger Property="IsSelected" Value="True">
+                                        <Setter Property="Background" Value="{StaticResource BackgroundBrushSelected}"/>
+                                        <Setter Property="Foreground" Value="{StaticResource ForegroundBrushClear}" />
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </DataGridTextColumn.CellStyle>
+                    </DataGridTextColumn>
+                    <!-- 'Type' Stop-->
 
-                <!-- 'Time' Start-->
-                <DataGridTextColumn Header="Time" Binding="{Binding StringTime}" IsReadOnly="True" Width="*">
-                    <DataGridTextColumn.CellStyle>
-                        <Style TargetType="DataGridCell">
-                            <Setter Property="Background" Value="{StaticResource BackgroundBrush}" />
-                            <Style.Triggers>
-                                <Trigger Property="IsSelected" Value="True">
-                                    <Setter Property="Background" Value="{StaticResource BackgroundBrushSelected}"/>
-                                    <Setter Property="Foreground" Value="{StaticResource ForegroundBrushClear}" />
-                                </Trigger>
-                            </Style.Triggers>
-                        </Style>
-                    </DataGridTextColumn.CellStyle>
-                </DataGridTextColumn>
-                <!-- 'Time' Stop-->
+                    <!-- 'Name' Start-->
+                    <DataGridTextColumn Header="Name" Binding="{Binding Name}" IsReadOnly="True" Width="*">
+                        <DataGridTextColumn.CellStyle>
+                            <Style TargetType="DataGridCell">
+                                <Setter Property="Background" Value="{StaticResource BackgroundBrushClear}" />
+                                <Style.Triggers>
+                                    <Trigger Property="IsSelected" Value="True">
+                                        <Setter Property="Background" Value="{StaticResource BackgroundBrushSelected}"/>
+                                        <Setter Property="Foreground" Value="{StaticResource ForegroundBrushClear}" />
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </DataGridTextColumn.CellStyle>
+                    </DataGridTextColumn>
+                    <!-- 'Name' Stop-->
 
-                <!-- 'Version List' Start-->
-                <DataGridTextColumn Header="Version List" Binding="{Binding VersionList}" IsReadOnly="True" Width="*">
-                    <DataGridTextColumn.CellStyle>
-                        <Style TargetType="DataGridCell">
-                            <Setter Property="Background" Value="{StaticResource BackgroundBrush}" />
-                            <Style.Triggers>
-                                <Trigger Property="IsSelected" Value="True">
-                                    <Setter Property="Background" Value="{StaticResource BackgroundBrushSelected}"/>
-                                    <Setter Property="Foreground" Value="{StaticResource ForegroundBrushClear}" />
-                                </Trigger>
-                            </Style.Triggers>
-                        </Style>
-                    </DataGridTextColumn.CellStyle>
-                </DataGridTextColumn>
-                <!-- 'Version List' Stop-->
+                    <!-- 'Date' Start-->
+                    <DataGridTextColumn Header="Date" Binding="{Binding StringDate}" IsReadOnly="True" Width="*">
+                        <DataGridTextColumn.CellStyle>
+                            <Style TargetType="DataGridCell">
+                                <Setter Property="Background" Value="{StaticResource BackgroundBrush}" />
+                                <Style.Triggers>
+                                    <Trigger Property="IsSelected" Value="True">
+                                        <Setter Property="Background" Value="{StaticResource BackgroundBrushSelected}"/>
+                                        <Setter Property="Foreground" Value="{StaticResource ForegroundBrushClear}" />
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </DataGridTextColumn.CellStyle>
+                    </DataGridTextColumn>
+                    <!-- 'Date' Stop-->
 
-                <!-- 'No of Lines' Start-->
-                <DataGridTextColumn Header="No Of Lines" Binding="{Binding NoOfLines}" IsReadOnly="True" Width="*">
-                    <DataGridTextColumn.CellStyle>
-                        <Style TargetType="DataGridCell">
-                            <Setter Property="Background" Value="{StaticResource BackgroundBrush}" />
-                            <Style.Triggers>
-                                <Trigger Property="IsSelected" Value="True">
-                                    <Setter Property="Background" Value="{StaticResource BackgroundBrushSelected}"/>
-                                    <Setter Property="Foreground" Value="{StaticResource ForegroundBrushClear}" />
-                                </Trigger>
-                            </Style.Triggers>
-                        </Style>
-                    </DataGridTextColumn.CellStyle>
-                </DataGridTextColumn>
-                <!-- 'No of Lines' Stop-->
+                    <!-- 'Time' Start-->
+                    <DataGridTextColumn Header="Time" Binding="{Binding StringTime}" IsReadOnly="True" Width="*">
+                        <DataGridTextColumn.CellStyle>
+                            <Style TargetType="DataGridCell">
+                                <Setter Property="Background" Value="{StaticResource BackgroundBrush}" />
+                                <Style.Triggers>
+                                    <Trigger Property="IsSelected" Value="True">
+                                        <Setter Property="Background" Value="{StaticResource BackgroundBrushSelected}"/>
+                                        <Setter Property="Foreground" Value="{StaticResource ForegroundBrushClear}" />
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </DataGridTextColumn.CellStyle>
+                    </DataGridTextColumn>
+                    <!-- 'Time' Stop-->
 
-            </DataGrid.Columns>
-        </DataGrid>
-        <!--Datagrid End-->
+                    <!-- 'Version List' Start-->
+                    <DataGridTextColumn Header="Version List" Binding="{Binding VersionList}" IsReadOnly="True" Width="*">
+                        <DataGridTextColumn.CellStyle>
+                            <Style TargetType="DataGridCell">
+                                <Setter Property="Background" Value="{StaticResource BackgroundBrush}" />
+                                <Style.Triggers>
+                                    <Trigger Property="IsSelected" Value="True">
+                                        <Setter Property="Background" Value="{StaticResource BackgroundBrushSelected}"/>
+                                        <Setter Property="Foreground" Value="{StaticResource ForegroundBrushClear}" />
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </DataGridTextColumn.CellStyle>
+                    </DataGridTextColumn>
+                    <!-- 'Version List' Stop-->
+
+                    <!-- 'No of Lines' Start-->
+                    <DataGridTextColumn Header="No Of Lines" Binding="{Binding NoOfLines}" IsReadOnly="True" Width="*">
+                        <DataGridTextColumn.CellStyle>
+                            <Style TargetType="DataGridCell">
+                                <Setter Property="Background" Value="{StaticResource BackgroundBrush}" />
+                                <Style.Triggers>
+                                    <Trigger Property="IsSelected" Value="True">
+                                        <Setter Property="Background" Value="{StaticResource BackgroundBrushSelected}"/>
+                                        <Setter Property="Foreground" Value="{StaticResource ForegroundBrushClear}" />
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </DataGridTextColumn.CellStyle>
+                    </DataGridTextColumn>
+                    <!-- 'No of Lines' Stop-->
+
+                </DataGrid.Columns>
+            </DataGrid>
+            <!--Datagrid End-->
+
+            <!--Statusbar Start-->
+            <StatusBar Grid.Column="0" Grid.Row="4" Background="{DynamicResource BackgroundBrushClear}">
+                <StatusBar.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="400" />
+                                <ColumnDefinition Width="5" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="100" />
+                            </Grid.ColumnDefinitions>
+                        </Grid>
+                    </ItemsPanelTemplate>
+                </StatusBar.ItemsPanel>
+                <StatusBarItem Grid.Column="0" >
+                    <TextBlock x:Name="DestFolder" Text="{Binding DestinationFolder}" Width="400" />
+                </StatusBarItem>
+                <Separator Grid.Column="1" />
+                <StatusBarItem Grid.Column="2">
+                    <TextBlock x:Name="RemoteUrl" Text="{Binding GitRemoteUrl}"  />
+                </StatusBarItem>
+                <Separator Grid.Column="3" />
+                <StatusBarItem Grid.Column="4">
+                    <ProgressBar x:Name="ProcessProgessBar" Value="50" Width="90" Height="16" />
+                </StatusBarItem>
+                <StatusBarItem Grid.Column="4">
+                    <TextBlock x:Name="GridRowCountTextBox" Text="Empty" />
+                </StatusBarItem>
+            </StatusBar>
+            <!--Statusbar End-->
+            
+        </Grid>
     </DockPanel>
 </Window>

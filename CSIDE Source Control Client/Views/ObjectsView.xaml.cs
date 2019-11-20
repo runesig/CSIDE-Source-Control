@@ -27,7 +27,7 @@ namespace CSIDESourceControl.Client
         {
             InitializeComponent();
 
-            _viewModel = new ObjectsViewModel(new DialogService());
+            _viewModel = new ObjectsViewModel(new ObjectsViewDialogService());
 
             DataContext = _viewModel;
 

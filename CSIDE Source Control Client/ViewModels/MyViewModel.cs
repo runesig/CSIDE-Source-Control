@@ -14,9 +14,9 @@ namespace CSIDESourceControlClient.ViewModels
     public class MyViewModel : INotifyPropertyChanged
     {
         private User _user;
-        private IDialogService _messageBoxService;
+        private IObjectsViewDialogService _messageBoxService;
 
-        public MyViewModel(IDialogService messageBoxService)
+        public MyViewModel(IObjectsViewDialogService messageBoxService)
         {
             _messageBoxService = messageBoxService;
 

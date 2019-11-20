@@ -1,5 +1,4 @@
-﻿using CSIDESourceControl.Client.Service;
-using CSIDESourceControlClient.ViewModels;
+﻿using CSIDESourceControl.Client.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,24 +11,28 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace CSIDESourceControl.Client
+namespace CSIDESourceControl.Client.Views
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Interaction logic for RemoteView.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class RemoteView : Window
     {
-        private readonly MyViewModel _viewModel;
-        public MainWindow()
+        private readonly RemoteViewModel _viewModel;
+        public RemoteView()
         {
             InitializeComponent();
 
-            _viewModel = new MyViewModel(new ObjectsViewDialogService());
-            // The DataContext serves as the starting point of Binding Paths
+            _viewModel = new RemoteViewModel();
+
             DataContext = _viewModel;
+        }
+
+        private void btnDialogOk_Click(object sender, RoutedEventArgs e)
+        {
+            DialogResult = true;
         }
     }
 }

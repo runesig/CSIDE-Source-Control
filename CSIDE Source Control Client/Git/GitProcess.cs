@@ -10,10 +10,8 @@ namespace CSIDESourceControl.Client.Git
 {
     public class GitProcess
     {
-        public static string Excecute(string directory, string command)
+        public static int Excecute(string directory, string command, out string output)
         {
-            string output = string.Empty;
-
             try
             {
                 ProcessStartInfo startInfo = new ProcessStartInfo()
@@ -24,19 +22,38 @@ namespace CSIDESourceControl.Client.Git
                     RedirectStandardOutput = true,
                     UseShellExecute = false,
                     WindowStyle = ProcessWindowStyle.Hidden,
+                    RedirectStandardError = true,
                     CreateNoWindow = true
-            };
+                };
 
                 Process gitProcess = Process.Start(startInfo);
-                output = gitProcess.StandardOutput.ReadToEnd();
-                Thread.Sleep(TimeSpan.FromSeconds(1));
+
+                string standardOutput = gitProcess.StandardOutput.ReadToEnd();
+                string standardError = gitProcess.StandardError.ReadToEnd();
+                gitProcess.WaitForExit();
+
+                output = CheckOutputString(standardOutput, standardError);
+
+                return gitProcess.ExitCode;
             }
             catch (Exception ex)
             {
                 throw (ex);
             }
+        }
 
-            return output;
+        private static string CheckOutputString(string standardOutput, string standardError)
+        {
+            if (standardError.Contains("fatal:"))
+                throw new Exception(standardError);
+            
+            if((string.IsNullOrEmpty(standardOutput)) && (!string.IsNullOrEmpty(standardError)))
+                    return standardError;
+
+            if ((!string.IsNullOrEmpty(standardOutput)) && (string.IsNullOrEmpty(standardError)))
+                return standardOutput;
+
+            return "Unknown status";
         }
     }
 }
