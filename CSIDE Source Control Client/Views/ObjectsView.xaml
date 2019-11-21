@@ -34,7 +34,9 @@
                 <!--Menu Start-->
                 <Menu Width="Auto" Height="20" Background="{DynamicResource BackgroundBrushClear}">
                     <MenuItem Header="_File">
-                        <MenuItem x:Name="_Import" Header="Import" Command="{Binding Path=ShowOpenFileDialog}" />
+                        <MenuItem x:Name="_Import" Header="Open Object File" Command="{Binding Path=ShowOpenFileDialog}" />
+                        <MenuItem x:Name="_ImportNAV" Header="_Import" Command="{Binding Path=ImportFinexeFileCommand}" />
+                        <Separator />
                         <MenuItem x:Name="DestinationFolder" Header="_Select Destination Folder" Command="{Binding Path=ShowSelectDestinationFolder}" />
                         <Separator />
                         <MenuItem Header="_Exit" />

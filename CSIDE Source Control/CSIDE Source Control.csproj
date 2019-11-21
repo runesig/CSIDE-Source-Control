@@ -41,7 +41,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ExportFinexe\ExportFilter.cs" />
+    <Compile Include="ExportFinexe\ExportFinexeHandling.cs" />
+    <Compile Include="ExportFinexe\ExportResult.cs" />
+    <Compile Include="ExportFinexe\StatusFiles\NavCommandResultFile.cs" />
+    <Compile Include="ExportFinexe\StatusFiles\QueryExportLogFile.cs" />
+    <Compile Include="ExportFinexe\StatusFiles\StatusFile.cs" />
+    <Compile Include="Git\GitProcess.cs" />
     <Compile Include="Helpers\ObjectHelper.cs" />
+    <Compile Include="Models\ImportSettings.cs" />
+    <Compile Include="Models\ServerSetup.cs" />
     <Compile Include="ObjectHandling\ObjectsExport.cs" />
     <Compile Include="ObjectHandling\ObjectsImport.cs" />
     <Compile Include="Models\NavObject.cs" />

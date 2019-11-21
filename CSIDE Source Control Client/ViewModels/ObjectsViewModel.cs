@@ -1,5 +1,5 @@
 ﻿using CSIDESourceControl.Client.Commands;
-using CSIDESourceControl.Client.Git;
+using CSIDESourceControl.Git;
 using CSIDESourceControl.Client.Service;
 using CSIDESourceControl.Models;
 using CSIDESourceControl.ObjectHandling;
@@ -12,6 +12,8 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using CSIDESourceControl.ExportFinexe;
+using CSIDESourceControl.Client.Helpers;
 
 namespace CSIDESourceControl.Client.ViewModels
 {
@@ -34,6 +36,7 @@ namespace CSIDESourceControl.Client.ViewModels
         private RelayCommand<object> _gitPush;
         private RelayCommand<object> _gitSync;
         private RelayCommand<string[]> _importFiles;
+        private RelayCommand<string> _importFinexeFile;
 
         public ObjectsViewModel(IObjectsViewDialogService dialogService)
         {
@@ -190,6 +193,17 @@ namespace CSIDESourceControl.Client.ViewModels
             }
         }
 
+        public ICommand ImportFinexeFileCommand
+        {
+            get
+            {
+                if (_importFinexeFile == null)
+                    _importFinexeFile = new RelayCommand<string>(param => ImportFinExeFile(), param => true);
+
+                return _importFinexeFile;
+            }
+        }
+
         private void OpenFileDialog()
         {
             string[] filePaths = null;
@@ -238,6 +252,40 @@ namespace CSIDESourceControl.Client.ViewModels
             catch (Exception ex)
             {
                 _dialogService.ShowErrorMessage("Error importing Object File", ex.Message);
+            }
+        }
+
+        private async void ImportFinExeFile()
+        {
+            ImportSettings importSettings = new ImportSettings() { Modified = true };
+
+            if (_dialogService.ImportFromFinExe(ref importSettings))
+            {
+                ExportFinexeHelper exportFinExe = new ExportFinexeHelper();
+
+                // Hardcoded
+                ServerSetup serverSetup = new ServerSetup
+                {
+                    Server = @"RUNESIGURDS629E",
+                    Database = @"Demo Database NAV (7-1)",
+                    FinSQLPath = @"C:\Program Files (x86)\Microsoft Dynamics NAV\71\RoleTailored Client\finsql.exe",
+                    UseNTAuthentication = true,
+                    UserName = "",
+                    Password = "",
+                    Filter = importSettings.Filter
+                };
+
+                var result = await exportFinExe.ExportObjectsFromFinExe(serverSetup);
+
+                if (result.Success)
+                {
+                    string[] importFiles = new string[] { result.ExportedObjectsPath };
+                    ImportFiles(importFiles);
+                }
+                else
+                {
+                    _dialogService.ShowErrorMessage("Import Object Files Error", result.Message);
+                }
             }
         }
 
@@ -396,7 +444,6 @@ namespace CSIDESourceControl.Client.ViewModels
                 _dialogService.ShowErrorMessage("Git Status Error", ex.Message);
             }
         }
-
 
         private void CheckGitOutput(string output)
         {

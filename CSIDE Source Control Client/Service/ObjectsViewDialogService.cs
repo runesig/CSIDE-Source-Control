@@ -1,5 +1,6 @@
 ﻿using CSIDESourceControl.Client.ViewModels;
 using CSIDESourceControl.Client.Views;
+using CSIDESourceControl.Models;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
@@ -89,6 +90,21 @@ namespace CSIDESourceControl.Client.Service
 
             bool? dialogResult = remote.ShowDialog();
             remoteurl = viewModel.RemoteUrl;
+
+            if (dialogResult.HasValue)
+                return dialogResult.Value;
+
+            return false;
+        }
+
+        public bool ImportFromFinExe(ref ImportSettings importSettings)
+        {
+            ImportViewModel viewModel = new ImportViewModel(importSettings);
+
+            ImportView import = new ImportView();
+            import.DataContext = viewModel;
+
+            bool? dialogResult = import.ShowDialog();
 
             if (dialogResult.HasValue)
                 return dialogResult.Value;

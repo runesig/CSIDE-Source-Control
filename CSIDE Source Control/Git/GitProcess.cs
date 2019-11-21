@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace CSIDESourceControl.Client.Git
+namespace CSIDESourceControl.Git
 {
     public class GitProcess
     {
