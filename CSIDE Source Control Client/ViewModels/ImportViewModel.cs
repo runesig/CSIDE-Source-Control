@@ -1,6 +1,7 @@
 ﻿using CSIDESourceControl.Client.Commands;
 using CSIDESourceControl.Client.Views;
 using CSIDESourceControl.ExportFinexe;
+using CSIDESourceControl.Helpers;
 using CSIDESourceControl.Models;
 using System;
 using System.Collections.Generic;
@@ -16,11 +17,11 @@ namespace CSIDESourceControl.Client.ViewModels
     {
         private RelayCommand<object> _showServerSetupDialog;
 
-        private ImportSettings _importSettings;
+        private ExportFilterModel _exportFilter;
 
-        public ImportViewModel(ImportSettings importSettings)
+        public ImportViewModel(ExportFilterModel exportFilter)
         {
-            _importSettings = importSettings;
+            _exportFilter = exportFilter;
 
             CreateFilter();
         }
@@ -38,7 +39,7 @@ namespace CSIDESourceControl.Client.ViewModels
 
         public void ShowServerSetupDialog()
         {
-            ServerSetup currentServerSetup = new ServerSetup(); // Read from file 
+            ServerSetupModel currentServerSetup = new ServerSetupModel(); // Read from file 
 
             ServerSetupViewModel viewModel = new ServerSetupViewModel(currentServerSetup);
 
@@ -46,7 +47,7 @@ namespace CSIDESourceControl.Client.ViewModels
             view.DataContext = viewModel;
 
             bool? dialogResult = view.ShowDialog();
-            ServerSetup newServerSetup = viewModel.ServerSetup;
+            ServerSetupModel newServerSetup = viewModel.ServerSetup;
 
             if ((dialogResult.HasValue) && (dialogResult.Value))
             { 
@@ -54,56 +55,57 @@ namespace CSIDESourceControl.Client.ViewModels
             }
         }
 
-        public ImportSettings GetImportSettings()
+        public ExportFilterModel GetImportFilters()
         {
-            return _importSettings;
+            return _exportFilter;
         }
         public bool Modified
         {
-            get { return _importSettings.Modified; }
-            set { _importSettings.Modified = value; CreateFilter(); OnPropertyChange("Modified"); }
+            get { return _exportFilter.Modified; }
+            set { _exportFilter.Modified = value; CreateFilter(); OnPropertyChange("Modified"); }
         }
 
         public DateTime? DateFrom
         {
-            get { return _importSettings.DateFrom; }
-            set { _importSettings.DateFrom = value; CreateFilter(); OnPropertyChange("DateFrom"); }
+            get { return _exportFilter.DateFrom; }
+            set { _exportFilter.DateFrom = value; CreateFilter(); OnPropertyChange("DateFrom"); }
         }
 
         public DateTime? DateTo
         {
-            get { return _importSettings.DateTo; }
-            set { _importSettings.DateTo = value; CreateFilter(); OnPropertyChange("DateTo"); }
+            get { return _exportFilter.DateTo; }
+            set { _exportFilter.DateTo = value; CreateFilter(); OnPropertyChange("DateTo"); }
         }
 
         public string VersionList
         {
-            get { return _importSettings.VersionList; }
-            set { _importSettings.VersionList = value; CreateFilter(); OnPropertyChange("VersionList"); }
+            get { return _exportFilter.VersionList; }
+            set { _exportFilter.VersionList = value; CreateFilter(); OnPropertyChange("VersionList"); }
         }
 
-        public bool CustomFilter
+        public bool UseCustomFilter
         {
-            get { return _importSettings.CustomFilter; }
-            set { _importSettings.CustomFilter = value; OnPropertyChange("CustomFilter"); }
+            get { return _exportFilter.UseCustomFilter; }
+            set { _exportFilter.UseCustomFilter = value; OnPropertyChange("UseCustomFilter"); }
         }
 
-        public string Filter
+        public string CustomFilter
         {
-            get { return _importSettings.Filter; }
-            set { _importSettings.Filter = value; OnPropertyChange("Filter"); }
+            get { return _exportFilter.CustomFilter; }
+            set { _exportFilter.CustomFilter = value; OnPropertyChange("CustomFilter"); }
         }
 
         private void CreateFilter()
         {
-            Filter = ExportFilter.Create(
+            CustomFilter = ExportFilter.CreateFilterString(
                 Modified,
                 DateFrom,
                 DateTo,
                 VersionList,
-                CustomFilter,
-                Filter);
+                UseCustomFilter,
+                CustomFilter);
         }
+
 
         public event PropertyChangedEventHandler PropertyChanged;
 

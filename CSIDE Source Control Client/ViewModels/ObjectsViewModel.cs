@@ -14,13 +14,14 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using CSIDESourceControl.ExportFinexe;
 using CSIDESourceControl.Client.Helpers;
+using CSIDESourceControl.Helpers;
 
 namespace CSIDESourceControl.Client.ViewModels
 {
     public class ObjectsViewModel : INotifyPropertyChanged
     {
         private IObjectsViewDialogService _dialogService;
-        private ObservableCollection<NavObject> _navObjects;
+        private ObservableCollection<NavObjectModel> _navObjects;
         private string _destinationFolder;
         private string _gitOutput;
         private string _gitRemoteUrl;
@@ -41,10 +42,10 @@ namespace CSIDESourceControl.Client.ViewModels
         public ObjectsViewModel(IObjectsViewDialogService dialogService)
         {
             _dialogService = dialogService;
-            _navObjects = new ObservableCollection<NavObject>();
+            _navObjects = new ObservableCollection<NavObjectModel>();
         }
 
-        public ObservableCollection<NavObject> NavObjects
+        public ObservableCollection<NavObjectModel> NavObjects
         {
             get { return _navObjects; }
             set { _navObjects = value; OnPropertyChange("NavObjects"); }
@@ -243,11 +244,11 @@ namespace CSIDESourceControl.Client.ViewModels
                     GitOutput = string.Format("Added file: {0}", filePath);
 
                     // Removes everything and adds new objects
-                    NavObjects = new ObservableCollection<NavObject>(import.NavObjects.Values);
+                    NavObjects = new ObservableCollection<NavObjectModel>(import.NavObjects.Values);
                 }
 
                 // Export to new destination
-                ObjectsExport.ExportObjects(NavObjects.ToList<NavObject>(), DestinationFolder);
+                ObjectsExport.ExportObjects(NavObjects.ToList<NavObjectModel>(), DestinationFolder);
             }
             catch (Exception ex)
             {
@@ -257,25 +258,16 @@ namespace CSIDESourceControl.Client.ViewModels
 
         private async void ImportFinExeFile()
         {
-            ImportSettings importSettings = new ImportSettings() { Modified = true };
+            ExportFilterModel exportFilter = new ExportFilterModel() { Modified = true };
 
-            if (_dialogService.ImportFromFinExe(ref importSettings))
+            SettingsHelper reader = new SettingsHelper(DestinationFolder);
+            ServerSetupModel serverSetup = reader.ReadServerSettings();
+
+            if (_dialogService.ImportFromFinExe(ref exportFilter))
             {
                 ExportFinexeHelper exportFinExe = new ExportFinexeHelper();
 
-                // Hardcoded
-                ServerSetup serverSetup = new ServerSetup
-                {
-                    Server = @"RUNESIGURDS629E",
-                    Database = @"Demo Database NAV (7-1)",
-                    FinExePath = @"C:\Program Files (x86)\Microsoft Dynamics NAV\71\RoleTailored Client\finsql.exe",
-                    UseNTAuthentication = true,
-                    UserName = "",
-                    Password = "",
-                    Filter = importSettings.Filter
-                };
-
-                var result = await exportFinExe.ExportObjectsFromFinExe(serverSetup);
+                var result = await exportFinExe.ExportObjectsFromFinExe(serverSetup, exportFilter);
 
                 if (result.Success)
                 {

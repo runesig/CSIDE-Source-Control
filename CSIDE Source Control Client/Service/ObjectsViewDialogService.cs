@@ -97,7 +97,7 @@ namespace CSIDESourceControl.Client.Service
             return false;
         }
 
-        public bool ImportFromFinExe(ref ImportSettings importSettings)
+        public bool ImportFromFinExe(ref ExportFilterModel importSettings)
         {
             ImportViewModel viewModel = new ImportViewModel(importSettings);
 

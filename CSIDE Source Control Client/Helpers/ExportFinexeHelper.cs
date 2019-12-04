@@ -11,7 +11,7 @@ namespace CSIDESourceControl.Client.Helpers
 {
     public class ExportFinexeHelper
     {
-        async public Task<ExportResult> ExportObjectsFromFinExe(ServerSetup serverSetup)
+        async public Task<ExportResult> ExportObjectsFromFinExe(ServerSetupModel serverSetup, ExportFilterModel exportFilter)
         {
             var result = await Task.Factory.StartNew(() =>
             {
@@ -29,8 +29,7 @@ namespace CSIDESourceControl.Client.Helpers
                     fileHandeling.Password = serverSetup.Password;
                 }
 
-                fileHandeling.Filter = serverSetup.Filter;
-
+                fileHandeling.Filter = ExportFilter.CreateFilterString(exportFilter);
 
                 if (!fileHandeling.ExportObjects(out string exportedObjectsPath, out string message))
                 {

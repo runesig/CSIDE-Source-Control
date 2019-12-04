@@ -10,14 +10,14 @@ namespace CSIDESourceControl.Client.ViewModels
 {
     public class ServerSetupViewModel : INotifyPropertyChanged
     {
-        private ServerSetup _serverSetup;
+        private ServerSetupModel _serverSetup;
 
-        public ServerSetupViewModel(ServerSetup serverSetup)
+        public ServerSetupViewModel(ServerSetupModel serverSetup)
         {
             _serverSetup = serverSetup;
         }
 
-        public ServerSetup ServerSetup
+        public ServerSetupModel ServerSetup
         {
             get { return _serverSetup; }
         }

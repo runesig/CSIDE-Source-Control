@@ -11,13 +11,13 @@ namespace CSIDESourceControl.ObjectHandling
 {
     public class ObjectsImport
     {
-        private readonly Dictionary<string, NavObject> _navObjects;
+        private readonly Dictionary<string, NavObjectModel> _navObjects;
         public ObjectsImport()
         {
-            _navObjects = new Dictionary<string, NavObject>();
+            _navObjects = new Dictionary<string, NavObjectModel>();
         }
 
-        public Dictionary<string, NavObject> NavObjects { get { return _navObjects;  } }
+        public Dictionary<string, NavObjectModel> NavObjects { get { return _navObjects;  } }
 
         public void RunImport(string _filePath)
         {
@@ -28,7 +28,7 @@ namespace CSIDESourceControl.ObjectHandling
                 return;
 
             ObjectSection currObjectSection = ObjectSection.Unknown;
-            NavObject currNavObject = null;
+            NavObjectModel currNavObject = null;
 
             var lines = File.ReadAllLines(_filePath, Encoding.Default);
 
@@ -45,7 +45,7 @@ namespace CSIDESourceControl.ObjectHandling
             }
         }
 
-        private void ProcessLine(string line, ObjectSection objectSection, ref NavObject navObject)
+        private void ProcessLine(string line, ObjectSection objectSection, ref NavObjectModel navObject)
         {
             switch (objectSection)
             {
@@ -79,9 +79,9 @@ namespace CSIDESourceControl.ObjectHandling
             navObject.ObjectLines.Add(line);
         }
 
-        private NavObject CreateNewObject(string line, ObjectSection objectSection, NavObject navObject)
+        private NavObjectModel CreateNewObject(string line, ObjectSection objectSection, NavObjectModel navObject)
         {
-            NavObject newNavObject = NewObject(line, objectSection);
+            NavObjectModel newNavObject = NewObject(line, objectSection);
             if (newNavObject != null)
             {
                 navObject = newNavObject;
@@ -91,7 +91,7 @@ namespace CSIDESourceControl.ObjectHandling
             return navObject;
         }
 
-        private NavObject NewObject(string line, ObjectSection objectSection)
+        private NavObjectModel NewObject(string line, ObjectSection objectSection)
         {
             string[] parts = line.Split(' ');
 
@@ -104,7 +104,7 @@ namespace CSIDESourceControl.ObjectHandling
             if (parts[0] != "OBJECT")
                 return null;
 
-            return new NavObject()
+            return new NavObjectModel()
             {
                 Type = parts[1],
                 Id = ObjectHelper.GetInt(parts[2]),
@@ -112,7 +112,7 @@ namespace CSIDESourceControl.ObjectHandling
             };
         }
 
-        private void SetObjectProperties(string line, ObjectSection objectSection, ref NavObject navObject)
+        private void SetObjectProperties(string line, ObjectSection objectSection, ref NavObjectModel navObject)
         {
             if (objectSection != ObjectSection.ObjectProperties)
                 return;

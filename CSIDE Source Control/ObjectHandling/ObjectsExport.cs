@@ -10,9 +10,9 @@ namespace CSIDESourceControl.ObjectHandling
 {
     public class ObjectsExport
     {
-        public static void ExportObjects(List<NavObject> objects, string filePath)
+        public static void ExportObjects(List<NavObjectModel> objects, string filePath)
         {
-            foreach (NavObject navObject in objects)
+            foreach (NavObjectModel navObject in objects)
             {
                 CreateDirectoryIfNotExists(filePath, navObject);
 
@@ -28,19 +28,19 @@ namespace CSIDESourceControl.ObjectHandling
             }
         }
 
-        private static void CreateDirectoryIfNotExists(string filePath, NavObject navObject)
+        private static void CreateDirectoryIfNotExists(string filePath, NavObjectModel navObject)
         {
             string folder = GetDirectoryPath(filePath, navObject);
             if (!Directory.Exists(folder))
                 Directory.CreateDirectory(folder);
         }
 
-        private static string GetDirectoryPath(string filePath, NavObject navObject)
+        private static string GetDirectoryPath(string filePath, NavObjectModel navObject)
         {
             return string.Format(@"{0}\{1}", filePath, navObject.Type);
         }
 
-        private static string GetFullPath(string filePath, NavObject navObject)
+        private static string GetFullPath(string filePath, NavObjectModel navObject)
         {
             return string.Format(@"{0}\{1}\{2}.txt", filePath, navObject.Type, navObject.InternalId);
         }

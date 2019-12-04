@@ -49,8 +49,8 @@
                 <Label Grid.Row="3" Grid.Column="0" Margin="10,5,3,5" Content="Version List" Height="25" />
                 <TextBox Grid.Row="3" Grid.Column="1" Margin="3,5,3,5" x:Name="VersionListTextBox" MinWidth="100" Width="Auto" Height="25" Text="{Binding VersionList, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
-                <CheckBox Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Margin="20,5,3,5" x:Name="CustomCheckBox" Content="Custom Filter" IsChecked="{Binding CustomFilter, Mode=TwoWay}" />
-                <TextBox Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Margin="20,5,3,5" x:Name="CustomFilterTextBox" Height="25" IsEnabled="{Binding IsChecked, ElementName=CustomCheckBox, Mode=OneWay}" Text="{Binding Filter, Mode = TwoWay}"/>
+                <CheckBox Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Margin="20,5,3,5" x:Name="CustomCheckBox" Content="Custom Filter" IsChecked="{Binding UseCustomFilter, Mode=TwoWay}" />
+                <TextBox Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Margin="20,5,3,5" x:Name="CustomFilterTextBox" Height="25" IsEnabled="{Binding IsChecked, ElementName=CustomCheckBox, Mode=OneWay}" Text="{Binding CustomFilter, Mode = TwoWay}"/>
 
             </Grid>
         </GroupBox>

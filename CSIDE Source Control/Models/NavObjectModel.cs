@@ -7,7 +7,7 @@ namespace CSIDESourceControl.Models
 {
     public enum ObjectSection { Unknown, Object, ObjectProperties, Properties, Fields, Keys, FieldGroups, Code };
 
-    public class NavObject
+    public class NavObjectModel
     {
         public string InternalId
         {
@@ -74,7 +74,7 @@ namespace CSIDESourceControl.Models
 
         public bool IsEdited { get; set; }
 
-        public bool IsExisting(NavObject objectToCompare)
+        public bool IsExisting(NavObjectModel objectToCompare)
         {
             if (objectToCompare == null)
                 return false;
@@ -82,7 +82,7 @@ namespace CSIDESourceControl.Models
             return true;
         }
 
-        public bool IsEqualTo(NavObject objectToCompare)
+        public bool IsEqualTo(NavObjectModel objectToCompare)
         {
             if (objectToCompare == null)
                 return false;
@@ -102,7 +102,7 @@ namespace CSIDESourceControl.Models
             return true;
         }
 
-        public bool IsObjectPropertiesEqual(NavObject objectToCompare)
+        public bool IsObjectPropertiesEqual(NavObjectModel objectToCompare)
         {
             if (objectToCompare == null)
                 return false;
@@ -124,7 +124,7 @@ namespace CSIDESourceControl.Models
             return true;
         }
 
-        public bool IsPropertiesEqual(NavObject objectToCompare)
+        public bool IsPropertiesEqual(NavObjectModel objectToCompare)
         {
             if (objectToCompare == null)
                 return false;
@@ -146,7 +146,7 @@ namespace CSIDESourceControl.Models
             return true;
         }
 
-        public bool IsCodeEqual(NavObject objectToCompare)
+        public bool IsCodeEqual(NavObjectModel objectToCompare)
         {
             if (objectToCompare == null)
                 return false;
@@ -168,7 +168,7 @@ namespace CSIDESourceControl.Models
             return true;
         }
 
-        public static bool operator ==(NavObject a, NavObject b)
+        public static bool operator ==(NavObjectModel a, NavObjectModel b)
         {
             if (System.Object.ReferenceEquals(a, b))
                 return true;
@@ -179,7 +179,7 @@ namespace CSIDESourceControl.Models
             return a.InternalId == b.InternalId;
         }
 
-        public static bool operator !=(NavObject a, NavObject b)
+        public static bool operator !=(NavObjectModel a, NavObjectModel b)
         {
             return !(a == b);
         }
@@ -223,9 +223,9 @@ namespace CSIDESourceControl.Models
             }
         }
 
-        public static NavObject Desserialize(ref BinaryReader reader)
+        public static NavObjectModel Desserialize(ref BinaryReader reader)
         {
-            return new NavObject()
+            return new NavObjectModel()
             {
                 ObjectLines = ReadGenericList(ref reader),
                 ObjectProperties = ReadGenericList(ref reader),

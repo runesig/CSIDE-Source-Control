@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CSIDESourceControl.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,8 +9,7 @@ namespace CSIDESourceControl.ExportFinexe
 {
     public class ExportFilter
     {
-
-        public static string Create(bool? modified, DateTime? dateFrom, DateTime? dateTo, string versionList, bool? custom, string customString)
+        public static string CreateFilterString(bool? modified, DateTime? dateFrom, DateTime? dateTo, string versionList, bool? useCustomFilter, string customFilter)
         {
             // filter=""Type=Table;ID=50000..50100""
 
@@ -19,8 +19,8 @@ namespace CSIDESourceControl.ExportFinexe
 
             string versionListFilter = GetVersionFilter(versionList);
 
-            if ((custom.HasValue) && (custom.Value == true))
-                return customString;
+            if ((useCustomFilter.HasValue) && (useCustomFilter.Value == true))
+                return customFilter;
 
             string filterString = string.Empty;
             AppendToFilter(ref filterString, modifiedFilter);
@@ -28,6 +28,17 @@ namespace CSIDESourceControl.ExportFinexe
             AppendToFilter(ref filterString, versionListFilter);
 
             return filterString;
+        }
+
+        public static string CreateFilterString(ExportFilterModel exportFilterModel)
+        {
+            return CreateFilterString(
+                exportFilterModel.Modified,
+                exportFilterModel.DateFrom,
+                exportFilterModel.DateTo,
+                exportFilterModel.VersionList,
+                exportFilterModel.UseCustomFilter,
+                exportFilterModel.CustomFilter);
         }
 
         public static void AppendToFilter(ref string filterString, string toAppend)

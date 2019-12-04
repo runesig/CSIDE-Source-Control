@@ -111,9 +111,9 @@ namespace CSIDESourceControl.Helpers
             return ObjectSection.Unknown;
         }
 
-        public static NavObject GetDictValue(Dictionary<string, NavObject> dict, string key)
+        public static NavObjectModel GetDictValue(Dictionary<string, NavObjectModel> dict, string key)
         {
-            if (!dict.TryGetValue(key, out NavObject navObject))
+            if (!dict.TryGetValue(key, out NavObjectModel navObject))
                 return null;
 
             return navObject;
