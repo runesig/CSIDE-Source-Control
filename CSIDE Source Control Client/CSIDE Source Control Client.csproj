@@ -26,7 +26,7 @@
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
     <AutorunEnabled>true</AutorunEnabled>
-    <ApplicationRevision>1</ApplicationRevision>
+    <ApplicationRevision>2</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -89,6 +89,7 @@
     <Compile Include="Helpers\ComboBoxItem.cs" />
     <Compile Include="Helpers\Converters.cs" />
     <Compile Include="Helpers\ExportFinexeHelper.cs" />
+    <Compile Include="ViewModels\ServerSetupViewModel.cs" />
     <Compile Include="ViewModels\ImportViewModel.cs" />
     <Compile Include="ViewModels\RemoteViewModel.cs" />
     <Compile Include="Views\ImportView.xaml.cs">
@@ -99,8 +100,10 @@
     </Compile>
     <Compile Include="Service\IObjectsViewDialogService.cs" />
     <Compile Include="Service\ObjectsViewDialogService.cs" />
-    <Compile Include="ViewModels\MyViewModel.cs" />
     <Compile Include="ViewModels\ObjectsViewModel.cs" />
+    <Compile Include="Views\ServerSetupView.xaml.cs">
+      <DependentUpon>ServerSetupView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\RemoteView.xaml.cs">
       <DependentUpon>RemoteView.xaml</DependentUpon>
     </Compile>
@@ -108,21 +111,17 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\MainWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Compile Include="Views\App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Views\MainWindow.xaml.cs">
-      <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
     <Page Include="Views\ObjectsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ServerSetupView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\RemoteView.xaml">
       <SubType>Designer</SubType>

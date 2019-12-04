@@ -17,7 +17,7 @@ namespace CSIDESourceControl.Client.Helpers
             {
                 ExportFinexeHandling fileHandeling = new ExportFinexeHandling()
                 {
-                    FinsqlPath = serverSetup.FinSQLPath,
+                    FinsqlPath = serverSetup.FinExePath,
                     ServerName = serverSetup.Server,
                     Database = serverSetup.Database,
                     NTAuthentication = serverSetup.UseNTAuthentication

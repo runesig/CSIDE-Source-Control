@@ -268,7 +268,7 @@ namespace CSIDESourceControl.Client.ViewModels
                 {
                     Server = @"RUNESIGURDS629E",
                     Database = @"Demo Database NAV (7-1)",
-                    FinSQLPath = @"C:\Program Files (x86)\Microsoft Dynamics NAV\71\RoleTailored Client\finsql.exe",
+                    FinExePath = @"C:\Program Files (x86)\Microsoft Dynamics NAV\71\RoleTailored Client\finsql.exe",
                     UseNTAuthentication = true,
                     UserName = "",
                     Password = "",
