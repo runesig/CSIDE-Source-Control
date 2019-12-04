@@ -9,6 +9,16 @@ namespace CSIDESourceControl.Models
 {
     public class ServerSetupModel
     {
+        public ServerSetupModel()
+        {
+            FinExePath = string.Empty;
+            Server = string.Empty;
+            Database = string.Empty;
+            UseNTAuthentication = false;
+            UserName = string.Empty;
+            Password = string.Empty;
+        }
+
         [JsonProperty(PropertyName = "finexe_path")]
         public string FinExePath { get; set; }
 

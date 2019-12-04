@@ -11,6 +11,8 @@ namespace CSIDESourceControl.Client.Helpers
 {
     public class ExportFinexeHelper
     {
+        public event ExportErrorEventHandling OnExportError;
+
         async public Task<ExportResult> ExportObjectsFromFinExe(ServerSetupModel serverSetup, ExportFilterModel exportFilter)
         {
             var result = await Task.Factory.StartNew(() =>
@@ -22,6 +24,7 @@ namespace CSIDESourceControl.Client.Helpers
                     Database = serverSetup.Database,
                     NTAuthentication = serverSetup.UseNTAuthentication
                 };
+                fileHandeling.OnExportError += FileHandeling_OnExportError;
 
                 if (!serverSetup.UseNTAuthentication)
                 {
@@ -40,6 +43,11 @@ namespace CSIDESourceControl.Client.Helpers
             });
 
             return result;
+        }
+
+        private void FileHandeling_OnExportError(object source, ExportErrorEventArgs e)
+        {
+            OnExportError?.Invoke(source, e);
         }
     }
 }

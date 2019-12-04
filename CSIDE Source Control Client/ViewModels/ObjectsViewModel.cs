@@ -4,6 +4,7 @@ using CSIDESourceControl.Client.Service;
 using CSIDESourceControl.Models;
 using CSIDESourceControl.ObjectHandling;
 using System;
+using System.Configuration;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -15,6 +16,7 @@ using System.Windows.Input;
 using CSIDESourceControl.ExportFinexe;
 using CSIDESourceControl.Client.Helpers;
 using CSIDESourceControl.Helpers;
+using System.Windows;
 
 namespace CSIDESourceControl.Client.ViewModels
 {
@@ -43,6 +45,8 @@ namespace CSIDESourceControl.Client.ViewModels
         {
             _dialogService = dialogService;
             _navObjects = new ObservableCollection<NavObjectModel>();
+
+            LoadRecentFolder();
         }
 
         public ObservableCollection<NavObjectModel> NavObjects
@@ -223,6 +227,35 @@ namespace CSIDESourceControl.Client.ViewModels
                 DestinationFolder = path;
 
             GitGetRemote();
+            SaveRecentFolder();
+        }
+
+        private void SaveRecentFolder()
+        {
+            try
+            {
+                Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+                RecentDestinationFolder.Save(config, DestinationFolder);
+            }
+            catch (Exception ex)
+            {
+                _dialogService.ShowErrorMessage("Config Save File Error", ex.Message);
+            }
+        }
+
+        private void LoadRecentFolder()
+        {
+            try
+            {
+                Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+                DestinationFolder = RecentDestinationFolder.Read(config);
+
+                // LoadFiles();
+            }
+            catch (Exception ex)
+            {
+                _dialogService.ShowErrorMessage("Config Read File Error", ex.Message);
+            }
         }
 
         private void ImportFiles(string[] filePaths)
@@ -258,7 +291,11 @@ namespace CSIDESourceControl.Client.ViewModels
 
         private async void ImportFinExeFile()
         {
-            ExportFilterModel exportFilter = new ExportFilterModel() { Modified = true };
+            SettingsHelper settingHelper = new SettingsHelper(DestinationFolder);
+            ExportFilterModel exportFilter = settingHelper.ReadFilterSettings();
+
+            if (exportFilter == null)
+                exportFilter = new ExportFilterModel();
 
             SettingsHelper reader = new SettingsHelper(DestinationFolder);
             ServerSetupModel serverSetup = reader.ReadServerSettings();
@@ -266,6 +303,7 @@ namespace CSIDESourceControl.Client.ViewModels
             if (_dialogService.ImportFromFinExe(ref exportFilter))
             {
                 ExportFinexeHelper exportFinExe = new ExportFinexeHelper();
+                exportFinExe.OnExportError += ExportFinExe_OnExportError;
 
                 var result = await exportFinExe.ExportObjectsFromFinExe(serverSetup, exportFilter);
 
@@ -273,12 +311,21 @@ namespace CSIDESourceControl.Client.ViewModels
                 {
                     string[] importFiles = new string[] { result.ExportedObjectsPath };
                     ImportFiles(importFiles);
+
+                    // Save Config
+                    settingHelper.SerializeToSettingsFile(serverSetup, exportFilter);
                 }
                 else
                 {
-                    _dialogService.ShowErrorMessage("Import Object Files Error", result.Message);
+                    if(!string.IsNullOrEmpty(result.Message))
+                        _dialogService.ShowErrorMessage("Import Object Files Error", result.Message);
                 }
             }
+        }
+
+        private void ExportFinExe_OnExportError(object source, ExportErrorEventArgs e)
+        {
+            _dialogService.ShowErrorMessage("Objects from C/SIDE Export Error", e.Exception.Message);
         }
 
         public void GitCommit()

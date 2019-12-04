@@ -16,8 +16,9 @@ namespace CSIDESourceControl.Client.ViewModels
     public class ImportViewModel : INotifyPropertyChanged
     {
         private RelayCommand<object> _showServerSetupDialog;
-
         private ExportFilterModel _exportFilter;
+
+        public string DestinationFolder { get; set; }
 
         public ImportViewModel(ExportFilterModel exportFilter)
         {
@@ -39,7 +40,8 @@ namespace CSIDESourceControl.Client.ViewModels
 
         public void ShowServerSetupDialog()
         {
-            ServerSetupModel currentServerSetup = new ServerSetupModel(); // Read from file 
+            SettingsHelper settingsHelper = new SettingsHelper(DestinationFolder);
+            ServerSetupModel currentServerSetup = settingsHelper.ReadServerSettings();
 
             ServerSetupViewModel viewModel = new ServerSetupViewModel(currentServerSetup);
 
