@@ -23,7 +23,7 @@ namespace CSIDESourceControl.Helpers
 
         public ServerSetupModel ReadServerSettings()
         {
-            string filePath = GetFilePath();
+            string filePath = GetSettingsFilePath();
 
             if (!File.Exists(filePath))
                 return new ServerSetupModel();
@@ -36,7 +36,7 @@ namespace CSIDESourceControl.Helpers
 
         public ExportFilterModel ReadFilterSettings()
         {
-            string filePath = GetFilePath();
+            string filePath = GetSettingsFilePath();
 
             if (!File.Exists(filePath))
                 return null;
@@ -69,23 +69,31 @@ namespace CSIDESourceControl.Helpers
 
         public void SerializeToSettingsFile(ServerSetupModel serverSetupModel, ExportFilterModel exportFilterModel)
         {
-            string settingsString = JsonConvert.SerializeObject(new
-            {
-                cside_environment = JsonConvert.SerializeObject(serverSetupModel),
-                filter = JsonConvert.SerializeObject(exportFilterModel),
-            });
+            DirectoryInfo di = Directory.CreateDirectory(GetSettingsFolder());
+            di.Attributes = FileAttributes.Directory | FileAttributes.Hidden;
 
-            File.WriteAllText(GetFilePath2(), settingsString);
+            SettingsModel model = new SettingsModel();
+            model.ServerSetupModel = serverSetupModel;
+            model.ExportFilterModel = exportFilterModel;
+
+            string settingsString = JsonConvert.SerializeObject(model);
+
+            File.WriteAllText(GetSettingsFilePath(), settingsString);
         }
 
-        private string GetFilePath()
+        public bool SettingsFolderExists()
         {
-            return string.Format(@"{0}\{1}\{2}", Folder, SettingsSubFolder, SettingsFilename);
+            return Directory.Exists(GetSettingsFolder());
+        }
+
+        private string GetSettingsFilePath()
+        {
+            return string.Format(@"{0}\{1}", GetSettingsFolder(), SettingsFilename);
 ;       }
 
-        private string GetFilePath2()
+        private string GetSettingsFolder()
         {
-            return string.Format(@"{0}\{1}\{2}", Folder, SettingsSubFolder, "Settings2.json");
+            return string.Format(@"{0}\{1}", Folder, SettingsSubFolder);
         }
     }
 }

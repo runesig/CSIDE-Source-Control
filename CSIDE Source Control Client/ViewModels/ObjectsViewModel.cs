@@ -16,7 +16,7 @@ using System.Windows.Input;
 using CSIDESourceControl.ExportFinexe;
 using CSIDESourceControl.Client.Helpers;
 using CSIDESourceControl.Helpers;
-using System.Windows;
+using System.Threading;
 
 namespace CSIDESourceControl.Client.ViewModels
 {
@@ -28,6 +28,9 @@ namespace CSIDESourceControl.Client.ViewModels
         private string _gitOutput;
         private string _gitRemoteUrl;
         private string _gitCommitMessage;
+        private bool _isWorking;
+        private int _progressBarValue;
+        private string _progressBarStatusText;
 
         private RelayCommand<object> _showOpenFileDialog;
         private RelayCommand<object> _showSelectDestinationFolder;
@@ -44,6 +47,7 @@ namespace CSIDESourceControl.Client.ViewModels
         public ObjectsViewModel(IObjectsViewDialogService dialogService)
         {
             _dialogService = dialogService;
+            _dialogService.TimerElapsed += _dialogService_TimerElapsed;
             _navObjects = new ObservableCollection<NavObjectModel>();
 
             LoadRecentFolder();
@@ -78,7 +82,25 @@ namespace CSIDESourceControl.Client.ViewModels
             get { return _gitCommitMessage; }
             set { _gitCommitMessage = value; OnPropertyChange("GitCommitMessage"); }
         }
-        
+
+        public bool IsWorking
+        {
+            get { return _isWorking; }
+            set { _isWorking = value; OnPropertyChange("IsWorking"); }
+        }
+
+        public int ProgressBarValue
+        {
+            get { return _progressBarValue; }
+            set { _progressBarValue = value; OnPropertyChange("ProgressBarValue"); }
+        }
+
+        public string ProgressBarStatusText
+        {
+            get { return _progressBarStatusText; }
+            set { _progressBarStatusText = value; OnPropertyChange("ProgressBarStatusText"); }
+        }
+
         public ICommand GitCommitCommand
         {
             get
@@ -274,7 +296,7 @@ namespace CSIDESourceControl.Client.ViewModels
                     ObjectsImport import = new ObjectsImport();
                     import.RunImport(filePath);
 
-                    GitOutput = string.Format("Added file: {0}", filePath);
+                    GitOutput = string.Format("Import success");
 
                     // Removes everything and adds new objects
                     NavObjects = new ObservableCollection<NavObjectModel>(import.NavObjects.Values);
@@ -302,29 +324,39 @@ namespace CSIDESourceControl.Client.ViewModels
 
             if (_dialogService.ImportFromFinExe(ref exportFilter))
             {
-                ExportFinexeHelper exportFinExe = new ExportFinexeHelper();
-                exportFinExe.OnExportError += ExportFinExe_OnExportError;
-
-                var result = await exportFinExe.ExportObjectsFromFinExe(serverSetup, exportFilter);
-
-                if (result.Success)
-                {
-                    string[] importFiles = new string[] { result.ExportedObjectsPath };
-                    ImportFiles(importFiles);
-
-                    // Save Config
-                    settingHelper.SerializeToSettingsFile(serverSetup, exportFilter);
-                }
-                else
-                {
-                    if(!string.IsNullOrEmpty(result.Message))
-                        _dialogService.ShowErrorMessage("Import Object Files Error", result.Message);
-                }
+                await Export(settingHelper, exportFilter, serverSetup);
             }
+        }
+
+        private async Task Export(SettingsHelper settingHelper, ExportFilterModel exportFilter, ServerSetupModel serverSetup)
+        {
+            ExportFinexeHelper exportFinExe = new ExportFinexeHelper();
+            exportFinExe.OnExportError += ExportFinExe_OnExportError;
+
+            StartWorking("Importing");
+
+            var result = await exportFinExe.ExportObjectsFromFinExe(serverSetup, exportFilter);
+
+            if (result.Success)
+            {
+                string[] importFiles = new string[] { result.ExportedObjectsPath };
+                ImportFiles(importFiles);
+
+                // Save Config
+                settingHelper.SerializeToSettingsFile(serverSetup, exportFilter);
+            }
+            else
+            {
+                if (!string.IsNullOrEmpty(result.Message))
+                    _dialogService.ShowErrorMessage("Import Object Files Error", result.Message);
+            }
+
+            StopWorking();
         }
 
         private void ExportFinExe_OnExportError(object source, ExportErrorEventArgs e)
         {
+            IsWorking = false;
             _dialogService.ShowErrorMessage("Objects from C/SIDE Export Error", e.Exception.Message);
         }
 
@@ -335,6 +367,8 @@ namespace CSIDESourceControl.Client.ViewModels
 
             try
             {
+                IsWorking = true;
+
                 if (string.IsNullOrEmpty(GitCommitMessage))
                     throw new Exception("Commit message can't be empty.");
 
@@ -352,6 +386,10 @@ namespace CSIDESourceControl.Client.ViewModels
             {
                 _dialogService.ShowErrorMessage("Git Commit Error", ex.Message);
             }
+            finally
+            {
+                IsWorking = false;
+            }
         }
 
         public void GitInit()
@@ -361,6 +399,16 @@ namespace CSIDESourceControl.Client.ViewModels
 
             try
             {
+                IsWorking = true;
+
+                // Settings
+                SettingsHelper settingHelper = new SettingsHelper(DestinationFolder); 
+                if(!settingHelper.SettingsFolderExists())
+                    settingHelper.SerializeToSettingsFile(new ServerSetupModel(), new ExportFilterModel());
+
+                // .gitignore
+                GitHelper.CreateGitFiles(DestinationFolder);
+
                 GitProcess.Excecute(DestinationFolder, "init", out string output);
 
                 CheckGitOutput(output);
@@ -369,6 +417,10 @@ namespace CSIDESourceControl.Client.ViewModels
             catch (Exception ex)
             {
                 _dialogService.ShowErrorMessage("Git Init Error", ex.Message);
+            }
+            finally
+            {
+                IsWorking = false;
             }
         }
 
@@ -379,6 +431,10 @@ namespace CSIDESourceControl.Client.ViewModels
 
             try
             {
+                IsWorking = true;
+
+                GitGetRemote();
+
                 GitProcess.Excecute(DestinationFolder, "status", out string output);
 
                 CheckGitOutput(output);
@@ -388,26 +444,41 @@ namespace CSIDESourceControl.Client.ViewModels
             {
                 _dialogService.ShowErrorMessage("Git Status Error", ex.Message);
             }
+            finally
+            {
+                IsWorking = false;
+            }
         }
 
-        public void GitSync()
+        public async Task GitSync()
         {
             if (!IsDestinationFolderSet())
                 return;
 
             try
             {
-                GitProcess.Excecute(DestinationFolder, "pull origin master", out string output);
-                GitOutput = output;
+                GitGetRemote();
+                GitOutput = "Start sync...";
 
-                if (GitProcess.Excecute(DestinationFolder, "push", out output) == 0)
-                    GitOutput = string.Format("Succesfully pulled and pushed from server\n {0}", output);
+                StartWorking("Sync");
+
+                GitResult pullResult = await GitProcess.ExcecuteASync(DestinationFolder, "pull origin master");
+                if (pullResult.ExitCode != 0)
+                    GitOutput = pullResult.Output;
+
+                GitResult pushResult = await GitProcess.ExcecuteASync(DestinationFolder, "push");
+                if (pushResult.ExitCode == 0)
+                    GitOutput = string.Format("Succesfully pulled and pushed from server\n{0}", pushResult.Output);
                 else
-                    GitOutput = output;
+                    GitOutput = pushResult.Output;
             }
             catch (Exception ex)
             {
                 _dialogService.ShowErrorMessage("Git Status Error", ex.Message);
+            }
+            finally
+            {
+                StopWorking();
             }
         }
 
@@ -418,6 +489,10 @@ namespace CSIDESourceControl.Client.ViewModels
 
             try
             {
+                StartWorking("Push");
+
+                GitGetRemote();
+
                 GitProcess.Excecute(DestinationFolder, "push --set-upstream origin master", out string output);
                 GitOutput = output;
 
@@ -425,6 +500,10 @@ namespace CSIDESourceControl.Client.ViewModels
             catch (Exception ex)
             {
                 _dialogService.ShowErrorMessage("Git Push Error", ex.Message);
+            }
+            finally
+            {
+                StopWorking();
             }
         }
 
@@ -435,6 +514,10 @@ namespace CSIDESourceControl.Client.ViewModels
 
             try
             {
+                IsWorking = true;
+
+                GitGetRemote();
+
                 GitProcess.Excecute(DestinationFolder, "pull origin master", out string output);
                 GitOutput = output;
 
@@ -443,6 +526,10 @@ namespace CSIDESourceControl.Client.ViewModels
             catch (Exception ex)
             {
                 _dialogService.ShowErrorMessage("Git Pull Error", ex.Message);
+            }
+            finally
+            {
+                IsWorking = false;
             }
         }
 
@@ -475,12 +562,17 @@ namespace CSIDESourceControl.Client.ViewModels
         {
             try
             {
+                IsWorking = true;
+
                 GitProcess.Excecute(DestinationFolder, string.Format(@"config --get remote.origin.url"), out string output);
                 GitRemoteUrl = Regex.Replace(output, @"\t|\n|\r", string.Empty);
             }
             catch (Exception ex)
             {
                 _dialogService.ShowErrorMessage("Git Status Error", ex.Message);
+            }
+            {
+                IsWorking = false;
             }
         }
 
@@ -496,6 +588,40 @@ namespace CSIDESourceControl.Client.ViewModels
                 SelectDestinationFolder();
 
             return !string.IsNullOrEmpty(DestinationFolder);
+        }
+
+        private void _dialogService_TimerElapsed(int value)
+        {
+            ProgressBarValue = value;
+        }
+
+        private void StartWorking(string what)
+        {
+            IsWorking = true;
+            ProgressBarValue = 0;
+            ProgressBarStatusText = what;
+            _dialogService.StartTimer();
+        }
+
+        private void StopWorking()
+        {
+            IsWorking = false;
+            ProgressBarValue = 100;
+            ProgressBarStatusText = "Done";
+            _dialogService.StopTimer();
+
+            Thread backgroundThread = new Thread(
+                new ThreadStart(() =>
+                {
+                    Thread.Sleep(3000);
+                    ProgressBarValue = 0;
+                    ProgressBarStatusText = string.Empty;
+
+                    GitStatus();
+                }
+            ));
+
+            backgroundThread.Start();
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

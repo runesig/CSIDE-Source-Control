@@ -1,4 +1,5 @@
-﻿<Window x:Class="CSIDESourceControl.Client.ObjectsView"
+﻿<Fluent:RibbonWindow x:Class="CSIDESourceControl.Client.ObjectsView"
+        xmlns:Fluent="clr-namespace:Fluent;assembly=Fluent"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -6,7 +7,7 @@
         xmlns:local="clr-namespace:CSIDESourceControl.Client"
         mc:Ignorable="d"
         Title="C/SIDE Source Control">
-        <Window.Resources>
+    <Fluent:RibbonWindow.Resources>
             <SolidColorBrush x:Key="BackgroundBrushClear" Color="White" />
             <SolidColorBrush x:Key="BackgroundBrushUnequal" Color="Salmon" />
             <SolidColorBrush x:Key="BackgroundBrushUnexisting" Color="LemonChiffon" />
@@ -14,9 +15,18 @@
             <SolidColorBrush x:Key="BackgroundBrush" Color="Azure" />
             <SolidColorBrush x:Key="BackgroundBrushSelected" Color="DodgerBlue" Opacity=".4"/>
             <SolidColorBrush x:Key="ForegroundBrushClear" Color="Black" />
-        </Window.Resources>
+        </Fluent:RibbonWindow.Resources>
+    <Fluent:RibbonWindow.Style>
+        <Style TargetType="{x:Type Window}">
+            <Setter Property="Cursor" Value="Arrow"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding Path=IsWorking}" Value="True">
+                    <Setter Property="Cursor" Value="Wait"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </Fluent:RibbonWindow.Style>
     <DockPanel>
-
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
@@ -29,9 +39,72 @@
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
+            <Fluent:Ribbon>
+                <!--Backstage-->
+                <Fluent:Ribbon.Menu>
+                    <Fluent:Backstage Header="File">
+                        <Fluent:BackstageTabControl>
+                            <Fluent:BackstageTabItem Header="Destination Folder">
+                                <Fluent:Button Name="buttonDestination" Header="Destination" Command="{Binding Path=ShowSelectDestinationFolder}"/>
+                            </Fluent:BackstageTabItem>
 
-            <StackPanel Grid.Column="0" Grid.Row="0">
-                <!--Menu Start-->
+                            <Fluent:BackstageTabItem Header="Open">
+                                ...
+                            </Fluent:BackstageTabItem>
+                            <Fluent:SeparatorTabItem />
+                            <Fluent:BackstageTabItem Header="Options">
+                                ...
+                            </Fluent:BackstageTabItem>
+                        </Fluent:BackstageTabControl>
+                    </Fluent:Backstage>
+                </Fluent:Ribbon.Menu>
+                <!--Tabs-->
+                <Fluent:RibbonTabItem Header="Process">
+                    <Fluent:RibbonGroupBox Header="Commit">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Label Grid.Row="0" Grid.Column="0"  x:Name="labelCommitMsg" Height="30" Margin="10,10,3,10" Content="Message" />
+                            <Fluent:TextBox Grid.Row="0" Grid.Column="1" Name="textBoxProcessCommitMessage" ToolTip="Commit Message" MinWidth="300" Height="25" Margin="3,10,3,10" Text="{Binding GitCommitMessage, UpdateSourceTrigger=PropertyChanged}">
+                                <Fluent:TextBox.InputBindings>
+                                    <KeyBinding Command="{Binding GitCommitCommand}" Key="Return" />
+                                </Fluent:TextBox.InputBindings>
+                            </Fluent:TextBox>
+                            <Fluent:Button Grid.Row="0" Grid.Column="2" Name="buttonProcessCommit" Header="Commit" ToolTip="Commit" SizeDefinition="Middle" Icon="Views\Images\Task-Send Status Report.png" LargeIcon="Views\Images\Task-Send Status Report.png" Command="{Binding Path=GitCommitCommand}"/>
+                        </Grid>
+                    </Fluent:RibbonGroupBox>
+                    <Fluent:RibbonGroupBox Header="Remote">
+                        <Fluent:Button Name="buttonSyncSynchronize" Header="Sync" ToolTip="Sync (Pull and Push)" Icon="Views\Images\Recurring.png" LargeIcon="Views\Images\Recurring.png" Command="{Binding Path=GitSyncCommand}" />
+                        <Fluent:Button Name="buttonPush" Header="Push" ToolTip="Push" SizeDefinition="Middle" Icon="Views\Images\News-Publish.png" LargeIcon="Views\Images\News-Publish.png" Command="{Binding Path=GitPushCommand}" />
+                        <Fluent:Button Name="buttonPull" Header="Pull" ToolTip="Pull" SizeDefinition="Middle" Icon="Views\Images\News-Tick.png" LargeIcon="Views\Images\News-Tick.png" Command="{Binding Path=GitPullCommand}" />
+                        <Fluent:Button Name="buttonRemote" Header="Remote" ToolTip="Set Git Remote" SizeDefinition="Middle" Icon="Views\Images\Link.png" LargeIcon="Views\Images\Link.png" Command="{Binding Path=GitSetRemoteCommand}" />
+                    </Fluent:RibbonGroupBox>
+                    <Fluent:RibbonGroupBox Header="Status">
+                        <Fluent:Button Name="buttonStatus" Header="Status" ToolTip="Status" SizeDefinition="Large" Icon="Views\Images\Importance-High.png" LargeIcon="Views\Images\Importance-High.png" Command="{Binding Path=GitStatusCommand}"/>
+                    </Fluent:RibbonGroupBox>
+                    <Fluent:RibbonGroupBox Header="Objects">
+                        <Fluent:Button Name="buttonImport" Header="Import" ToolTip="Import" SizeDefinition="Large" Icon="Views\Images\Importance-Low.png" LargeIcon="Views\Images\Importance-Low.png" Command="{Binding Path=ImportFinexeFileCommand}" />
+                        <Fluent:Button Name="buttonOpenFromFolder" Header="Open File" ToolTip="Open Object File" SizeDefinition="Middle" Icon="Views\Images\Archive.png" LargeIcon="Views\Images\Archive.png" Command="{Binding Path=ShowOpenFileDialog}" />
+                    </Fluent:RibbonGroupBox>
+                </Fluent:RibbonTabItem>
+                <Fluent:RibbonTabItem Header="Repository Setup">
+                    <Fluent:RibbonGroupBox Header="Repository">
+                        <Fluent:Button Name="buttonInit" Header="Init Git Repository" ToolTip="Initialize new repo" SizeDefinition="Large" Icon="Views\Images\Milestone-New.png" LargeIcon="Views\Images\Milestone-New.png" Command="{Binding Path=GitInitCommand}"/>
+                    </Fluent:RibbonGroupBox>
+                    <Fluent:RibbonGroupBox Header="Folder">
+                        <Fluent:Button Name="buttonDestinationFolder" Header="Set Destination Folder" ToolTip="Initialize new repo" SizeDefinition="Large" Icon="Views\Images\Folder-Out Box.png" LargeIcon="Views\Images\Folder-Out Box.png" Command="{Binding Path=ShowSelectDestinationFolder}"/>
+                    </Fluent:RibbonGroupBox>
+                </Fluent:RibbonTabItem>
+            </Fluent:Ribbon>
+
+            <!--<StackPanel Grid.Column="0" Grid.Row="0">
+                --><!--Menu Start--><!--
                 <Menu Width="Auto" Height="20" Background="{DynamicResource BackgroundBrushClear}">
                     <MenuItem Header="_File">
                         <MenuItem x:Name="_Import" Header="Open Object File" Command="{Binding Path=ShowOpenFileDialog}" />
@@ -61,8 +134,8 @@
                         <MenuItem x:Name="About" Header="_About" HorizontalAlignment="Left" Width="Auto"/>
                     </MenuItem>
                 </Menu>
-                <!--Menu End-->
-            </StackPanel>
+                --><!--Menu End--><!--
+            </StackPanel>-->
 
             <!-- Search Grid Start -->
             <Grid Grid.Column="0" Grid.Row="1">
@@ -90,10 +163,10 @@
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
-                    <Label x:Name="commitLabel" Grid.Row="0" Grid.Column="0" Height="25" Margin="10,10,3,10" Content="Commit Message" />
+                    <!--<Label x:Name="commitLabel" Grid.Row="0" Grid.Column="0" Height="25" Margin="10,10,3,10" Content="Commit Message" />
                     <TextBox x:Name="commitMessageTextBox" Grid.Row="0" Grid.Column="1"  MinWidth="300" Height="25" Margin="3,10,3,10" Text="{Binding GitCommitMessage}"/>
                     <Button x:Name="commitButton" Grid.Row="0" Grid.Column="2" Content="Commit" Height="25" Width="80" Margin="3,3,3,3" Command="{Binding GitCommitCommand}" />
-                    <Button x:Name="syncButton" Grid.Row="0" Grid.Column="3" Content="Sync" Height="25" Width="80" Margin="3,3,3,3" Command="{Binding GitSyncCommand}" />
+                    <Button x:Name="syncButton" Grid.Row="0" Grid.Column="3" Content="Sync" Height="25" Width="80" Margin="3,3,3,3" Command="{Binding GitSyncCommand}" />-->
                 </Grid>
 
                 <ScrollViewer Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="3" Margin="23,3,10,3" Background="{DynamicResource BackgroundBrushClear}">
@@ -292,14 +365,14 @@
                 </StatusBarItem>
                 <Separator Grid.Column="3" />
                 <StatusBarItem Grid.Column="4">
-                    <ProgressBar x:Name="ProcessProgessBar" Value="50" Width="90" Height="16" />
+                    <ProgressBar x:Name="ProcessProgessBar" Value="{Binding ProgressBarValue}" Width="90" Height="16" />
                 </StatusBarItem>
                 <StatusBarItem Grid.Column="4">
-                    <TextBlock x:Name="GridRowCountTextBox" Text="Empty" />
+                    <TextBlock x:Name="GridRowCountTextBox" Margin="3,3,3,3" Text="{Binding ProgressBarStatusText}" />
                 </StatusBarItem>
             </StatusBar>
             <!--Statusbar End-->
             
         </Grid>
     </DockPanel>
-</Window>
+</Fluent:RibbonWindow>

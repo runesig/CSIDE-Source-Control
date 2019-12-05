@@ -64,6 +64,15 @@
     <SignManifests>true</SignManifests>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="ControlzEx, Version=4.0.0.0, Culture=neutral, PublicKeyToken=69f1c32f803d307e, processorArchitecture=MSIL">
+      <HintPath>..\packages\ControlzEx.4.1.0\lib\net45\ControlzEx.dll</HintPath>
+    </Reference>
+    <Reference Include="Fluent, Version=7.0.0.0, Culture=neutral, PublicKeyToken=3e436e32a8c5546f, processorArchitecture=MSIL">
+      <HintPath>..\packages\Fluent.Ribbon.7.0.0\lib\net45\Fluent.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Xaml.Behaviors, Version=1.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Xaml.Behaviors.Wpf.1.0.1\lib\net45\Microsoft.Xaml.Behaviors.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -80,9 +89,12 @@
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
+    <Reference Include="UIAutomationProvider" />
+    <Reference Include="UIAutomationTypes" />
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="WindowsFormsIntegration" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="Views\App.xaml">
@@ -177,6 +189,36 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Views\Images\Task-Send Status Report.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Views\Images\Recurring.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Views\Images\Importance-Low.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Views\Images\News-Publish.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Views\Images\News-Tick.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Views\Images\Archive.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Views\Images\Link.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Views\Images\Importance-High.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Views\Images\Milestone-New.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Views\Images\Folder-Out Box.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

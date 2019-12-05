@@ -52,19 +52,39 @@
     <Compile Include="ExportFinexe\StatusFiles\QueryExportLogFile.cs" />
     <Compile Include="ExportFinexe\StatusFiles\StatusFile.cs" />
     <Compile Include="Git\GitProcess.cs" />
+    <Compile Include="Helpers\GitHelper.cs" />
     <Compile Include="Helpers\ObjectHelper.cs" />
     <Compile Include="Helpers\RecentDestinationFolder.cs" />
     <Compile Include="Helpers\SettingsHelper.cs" />
     <Compile Include="Models\ExportFilterModel.cs" />
     <Compile Include="Models\ServerSetupModel.cs" />
+    <Compile Include="Models\SettingsModel.cs" />
     <Compile Include="ObjectHandling\ObjectsExport.cs" />
     <Compile Include="ObjectHandling\ObjectsImport.cs" />
     <Compile Include="Models\NavObjectModel.cs" />
+    <Compile Include="Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="User.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="Resources\README.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\gitattributes.gitattributes" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\gitignore.gitignore" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

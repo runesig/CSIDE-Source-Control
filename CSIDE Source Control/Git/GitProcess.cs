@@ -1,13 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.ComponentModel;
 
 namespace CSIDESourceControl.Git
 {
+    public class GitResult
+    {
+        public int ExitCode { get; set; }
+        public string Output { get; set; }
+    }
     public class GitProcess
     {
         public static int Excecute(string directory, string command, out string output)
@@ -40,6 +43,49 @@ namespace CSIDESourceControl.Git
             {
                 throw (ex);
             }
+        }
+
+        public static async Task<GitResult> ExcecuteASync(string directory, string command)
+        {
+            var result = await Task.Factory.StartNew(() =>
+            {
+                try
+                {
+                    ProcessStartInfo startInfo = new ProcessStartInfo()
+                    {
+                        WorkingDirectory = directory,
+                        FileName = "git",
+                        Arguments = command,
+                        RedirectStandardOutput = true,
+                        UseShellExecute = false,
+                        WindowStyle = ProcessWindowStyle.Hidden,
+                        RedirectStandardError = true,
+                        CreateNoWindow = true
+                    };
+
+                    Process gitProcess = Process.Start(startInfo);
+
+                    string standardOutput = gitProcess.StandardOutput.ReadToEnd();
+                    string standardError = gitProcess.StandardError.ReadToEnd();
+                    gitProcess.WaitForExit();
+
+                    return new GitResult()
+                    {
+                        Output = CheckOutputString(standardOutput, standardError),
+                        ExitCode = gitProcess.ExitCode
+                    };
+                }
+                catch (Win32Exception w32ex)
+                {
+                    throw new Exception(string.Format("Is Git is initialized? {0}", w32ex.Message));
+                }
+                catch (Exception ex)
+                {
+                    throw (ex);
+                }
+            });
+
+            return result;
         }
 
         public static void Wait()

@@ -20,7 +20,7 @@ namespace CSIDESourceControl.Client
     /// <summary>
     /// Interaction logic for ObjectsView.xaml
     /// </summary>
-    public partial class ObjectsView : Window
+    public partial class ObjectsView : Fluent.RibbonWindow
     {
         private readonly ObjectsViewModel _viewModel;
         public ObjectsView()

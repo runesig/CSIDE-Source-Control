@@ -3,16 +3,24 @@ using CSIDESourceControl.Client.Views;
 using CSIDESourceControl.Models;
 using Microsoft.Win32;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 using System.Windows;
 
 namespace CSIDESourceControl.Client.Service
 {
     public class ObjectsViewDialogService : IObjectsViewDialogService
     {
+        private Timer _timer;
+        private int _progressValue;
+
+        public event TimerElapsedEventHandler TimerElapsed;
+
+        public ObjectsViewDialogService()
+        {
+            _progressValue = 0;
+            _timer = new Timer(Timer_Elapsed, null, 0, Timeout.Infinite);
+        }
+
         public void ShowInformationMessage(string caption, string text)
         {
             MessageBox.Show(text, caption, MessageBoxButton.OK, MessageBoxImage.Information);
@@ -110,6 +118,26 @@ namespace CSIDESourceControl.Client.Service
                 return dialogResult.Value;
 
             return false;
+        }
+
+        public void StartTimer()
+        {
+            _progressValue = 0;
+            _timer.Change(1000, 1000);
+        }
+
+        public void StopTimer()
+        {
+            _timer.Change(Timeout.Infinite, Timeout.Infinite);
+        }
+
+        private void Timer_Elapsed(object state)
+        {
+            _progressValue += 1;
+            if (_progressValue >= 100)
+                _progressValue = 100;
+
+            TimerElapsed?.Invoke(_progressValue);
         }
     }
 }
