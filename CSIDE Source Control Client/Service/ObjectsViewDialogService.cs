@@ -1,5 +1,6 @@
 ﻿using CSIDESourceControl.Client.ViewModels;
 using CSIDESourceControl.Client.Views;
+using CSIDESourceControl.Helpers;
 using CSIDESourceControl.Models;
 using Microsoft.Win32;
 using System;
@@ -29,6 +30,24 @@ namespace CSIDESourceControl.Client.Service
         public void ShowErrorMessage(string caption, string text)
         {
             MessageBox.Show(text, caption, MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+
+        public bool ShowServerSettings(ref ServerSetupModel serverSetup)
+        {
+            ServerSetupDialogService dialogService = new ServerSetupDialogService();
+
+            ServerSetupViewModel viewModel = new ServerSetupViewModel(dialogService, serverSetup);
+
+            ServerSetupView view = new ServerSetupView();
+            view.DataContext = viewModel;
+
+            bool? dialogResult = view.ShowDialog();
+            serverSetup = viewModel.ServerSetup;
+
+            if ((dialogResult.HasValue) && (dialogResult.Value))
+                return dialogResult.Value;
+
+            return false;
         }
 
         public bool OpenFile(ref string[] filePaths)
@@ -105,9 +124,9 @@ namespace CSIDESourceControl.Client.Service
             return false;
         }
 
-        public bool ImportFromFinExe(ref ExportFilterModel importSettings)
+        public bool ImportFromFinExe(string destinationFolder, ref ExportFilterModel importSettings)
         {
-            ImportViewModel viewModel = new ImportViewModel(importSettings);
+            ImportViewModel viewModel = new ImportViewModel(importSettings, destinationFolder);
 
             ImportView import = new ImportView();
             import.DataContext = viewModel;

@@ -39,7 +39,7 @@ namespace CSIDESourceControl.Helpers
             string filePath = GetSettingsFilePath();
 
             if (!File.Exists(filePath))
-                return null;
+                return new ExportFilterModel();
 
             using (StreamReader streamReader = new StreamReader(filePath))
             {
@@ -69,6 +69,9 @@ namespace CSIDESourceControl.Helpers
 
         public void SerializeToSettingsFile(ServerSetupModel serverSetupModel, ExportFilterModel exportFilterModel)
         {
+            if (string.IsNullOrEmpty(Folder) || string.IsNullOrEmpty(SettingsSubFolder))
+                return;
+
             DirectoryInfo di = Directory.CreateDirectory(GetSettingsFolder());
             di.Attributes = FileAttributes.Directory | FileAttributes.Hidden;
 

@@ -1,4 +1,5 @@
 ﻿using CSIDESourceControl.Client.Commands;
+using CSIDESourceControl.Client.Service;
 using CSIDESourceControl.Client.Views;
 using CSIDESourceControl.ExportFinexe;
 using CSIDESourceControl.Helpers;
@@ -17,12 +18,12 @@ namespace CSIDESourceControl.Client.ViewModels
     {
         private RelayCommand<object> _showServerSetupDialog;
         private ExportFilterModel _exportFilter;
+        private string _destinationFolder;
 
-        public string DestinationFolder { get; set; }
-
-        public ImportViewModel(ExportFilterModel exportFilter)
+        public ImportViewModel(ExportFilterModel exportFilter, string destinationFolder)
         {
             _exportFilter = exportFilter;
+            _destinationFolder = destinationFolder;
 
             CreateFilter();
         }
@@ -40,21 +41,23 @@ namespace CSIDESourceControl.Client.ViewModels
 
         public void ShowServerSetupDialog()
         {
-            SettingsHelper settingsHelper = new SettingsHelper(DestinationFolder);
+            SettingsHelper settingsHelper = new SettingsHelper(_destinationFolder);
             ServerSetupModel currentServerSetup = settingsHelper.ReadServerSettings();
+            ExportFilterModel exportFilter = settingsHelper.ReadFilterSettings();
 
-            ServerSetupViewModel viewModel = new ServerSetupViewModel(currentServerSetup);
+            // TODO: not part of MVVM Start
+            ServerSetupDialogService dialogService = new ServerSetupDialogService();
+            ServerSetupViewModel viewModel = new ServerSetupViewModel(dialogService, currentServerSetup);
 
             ServerSetupView view = new ServerSetupView();
             view.DataContext = viewModel;
+            // TODO: not part of MVVM Stop
 
             bool? dialogResult = view.ShowDialog();
-            ServerSetupModel newServerSetup = viewModel.ServerSetup;
+            currentServerSetup = viewModel.ServerSetup;
 
             if ((dialogResult.HasValue) && (dialogResult.Value))
-            { 
-                // Write new Server Setup to file
-            }
+                settingsHelper.SerializeToSettingsFile(currentServerSetup, exportFilter);
         }
 
         public ExportFilterModel GetImportFilters()

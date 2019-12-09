@@ -99,6 +99,7 @@
                     </Fluent:RibbonGroupBox>
                     <Fluent:RibbonGroupBox Header="Folder">
                         <Fluent:Button Name="buttonDestinationFolder" Header="Set Destination Folder" ToolTip="Initialize new repo" SizeDefinition="Large" Icon="Views\Images\Folder-Out Box.png" LargeIcon="Views\Images\Folder-Out Box.png" Command="{Binding Path=ShowSelectDestinationFolder}"/>
+                        <Fluent:Button Name="buttonSettings" Header="Server Setup" ToolTip="Server Setup" SizeDefinition="Large" Icon="Views\Images\Settings.png" LargeIcon="Views\Images\Settings.png" Command="{Binding Path=ShowServerSettings}"/>
                     </Fluent:RibbonGroupBox>
                 </Fluent:RibbonTabItem>
             </Fluent:Ribbon>

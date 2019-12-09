@@ -34,6 +34,7 @@ namespace CSIDESourceControl.Client.ViewModels
 
         private RelayCommand<object> _showOpenFileDialog;
         private RelayCommand<object> _showSelectDestinationFolder;
+        private RelayCommand<object> _showServerSettings;
         private RelayCommand<object> _gitCommit;
         private RelayCommand<object> _gitInit;
         private RelayCommand<object> _gitSetremote;
@@ -209,6 +210,18 @@ namespace CSIDESourceControl.Client.ViewModels
             }
         }
 
+        public ICommand ShowServerSettings
+        {
+            get
+            {
+                if (_showServerSettings == null)
+                {
+                    _showServerSettings = new RelayCommand<object>(param => ServerSettings(), param => true);
+                }
+                return _showServerSettings;
+            }
+        }
+
         public ICommand ImportFilesCommand
         {
             get
@@ -252,6 +265,21 @@ namespace CSIDESourceControl.Client.ViewModels
             SaveRecentFolder();
         }
 
+        private void ServerSettings()
+        {
+            if (!IsDestinationFolderSet())
+                return;
+
+            SettingsHelper settingsHelper = new SettingsHelper(DestinationFolder);
+            ServerSetupModel currentServerSetup = settingsHelper.ReadServerSettings();
+            ExportFilterModel exportFilter = settingsHelper.ReadFilterSettings();
+
+            if (_dialogService.ShowServerSettings(ref currentServerSetup))
+            {
+                settingsHelper.SerializeToSettingsFile(currentServerSetup, exportFilter);
+            }
+        }
+
         private void SaveRecentFolder()
         {
             try
@@ -282,6 +310,9 @@ namespace CSIDESourceControl.Client.ViewModels
 
         private void ImportFiles(string[] filePaths)
         {
+            if (!IsDestinationFolderSet())
+                return;
+
             if (filePaths == null)
                 return;
 
@@ -313,16 +344,16 @@ namespace CSIDESourceControl.Client.ViewModels
 
         private async void ImportFinExeFile()
         {
+            if (!IsDestinationFolderSet())
+                return;
+
             SettingsHelper settingHelper = new SettingsHelper(DestinationFolder);
             ExportFilterModel exportFilter = settingHelper.ReadFilterSettings();
-
-            if (exportFilter == null)
-                exportFilter = new ExportFilterModel();
 
             SettingsHelper reader = new SettingsHelper(DestinationFolder);
             ServerSetupModel serverSetup = reader.ReadServerSettings();
 
-            if (_dialogService.ImportFromFinExe(ref exportFilter))
+            if (_dialogService.ImportFromFinExe(DestinationFolder, ref exportFilter))
             {
                 await Export(settingHelper, exportFilter, serverSetup);
             }

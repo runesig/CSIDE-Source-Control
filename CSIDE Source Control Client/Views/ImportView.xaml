@@ -7,6 +7,9 @@
         xmlns:helpers="clr-namespace:CSIDESourceControl.Client.Helpers"
         mc:Ignorable="d"
         Title="Import Object Files" Height="400" Width="400">
+    <Window.Resources>
+        <BitmapImage x:Key="SettingsImageSource" UriSource="../Views/Images/Settings.png" />
+    </Window.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
@@ -67,7 +70,9 @@
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
-            <Button x:Name="ServerSetupButton" Grid.Column="0" Grid.Row="0" Margin="10,10,5,20" Height="25" Width="80" HorizontalAlignment="Left" Command="{Binding ServerSetupDialogCommand}">Server Setup</Button>
+            <Button Grid.Column="0" Grid.Row="0" Margin="10,10,5,20" Height="25" Width="25" HorizontalAlignment="Left" Background="Transparent" BorderThickness="0" Command="{Binding ServerSetupDialogCommand}">
+                <Image Source="{StaticResource SettingsImageSource}" />
+            </Button>
             <Button x:Name="ImportButton" Grid.Column="1" Grid.Row="0" Margin="10,10,5,20" Height="25" Width="80" IsDefault="True" HorizontalAlignment="Right" Click="ImportButton_Click">Import</Button>
             <Button x:Name="CancelButton" Grid.Column="2" Grid.Row="0" Margin="5,10,10,20" Height="25" Width="80" IsCancel="True" HorizontalAlignment="Right">Cancel</Button>
         </Grid>

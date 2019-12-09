@@ -17,7 +17,8 @@ namespace CSIDESourceControl.Client.Service
         bool OpenFile(ref string[] filePaths);
         bool GetFolder(string description, out string folderPath);
         bool SetRemote(out string remoteUrl);
-        bool ImportFromFinExe(ref ExportFilterModel importSettings);
+        bool ImportFromFinExe(string destinationFolder, ref ExportFilterModel importSettings);
+        bool ShowServerSettings(ref ServerSetupModel serverSetup);
         void StartTimer();
         void StopTimer();
     }

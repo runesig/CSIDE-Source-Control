@@ -25,7 +25,7 @@ namespace CSIDESourceControl.Client.Views
             InitializeComponent();
         }
 
-        private void btnDialogOk_Click(object sender, RoutedEventArgs e)
+        private void BtnDialogOk_Click(object sender, RoutedEventArgs e)
         {
             DialogResult = true;
         }

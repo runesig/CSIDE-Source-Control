@@ -11,7 +11,7 @@ namespace CSIDESourceControl.Models
     {
         public ExportFilterModel()
         {
-            Modified = false;
+            Modified = true;
             DateFrom = null;
             DateTo = null;
             VersionList = string.Empty;

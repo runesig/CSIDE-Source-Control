@@ -79,6 +79,7 @@
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
@@ -105,6 +106,8 @@
     <Compile Include="Helpers\ComboBoxItem.cs" />
     <Compile Include="Helpers\Converters.cs" />
     <Compile Include="Helpers\ExportFinexeHelper.cs" />
+    <Compile Include="Service\IServerSetupDialogService.cs" />
+    <Compile Include="Service\ServerSetupDialogService.cs" />
     <Compile Include="ViewModels\ServerSetupViewModel.cs" />
     <Compile Include="ViewModels\ImportViewModel.cs" />
     <Compile Include="ViewModels\RemoteViewModel.cs" />
@@ -123,6 +126,10 @@
     <Compile Include="Views\RemoteView.xaml.cs">
       <DependentUpon>RemoteView.xaml</DependentUpon>
     </Compile>
+    <Page Include="ResourceDictionary.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\ImportView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -219,6 +226,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Views\Images\Folder-Out Box.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Views\Images\Settings.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
