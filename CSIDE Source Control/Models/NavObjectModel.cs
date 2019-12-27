@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using CSIDESourceControl.Helpers;
 
@@ -7,8 +8,9 @@ namespace CSIDESourceControl.Models
 {
     public enum ObjectSection { Unknown, Object, ObjectProperties, Properties, Fields, Keys, FieldGroups, Code };
 
-    public class NavObjectModel
+    public class NavObjectModel : INotifyPropertyChanged
     {
+        private bool _isEdited;
         public string InternalId
         {
             get
@@ -72,7 +74,11 @@ namespace CSIDESourceControl.Models
         private List<string> _code = new List<string>();
         public List<string> Code { get { return _code; } set { _code = value; } }
 
-        public bool IsEdited { get; set; }
+        public bool IsEdited
+        {
+            get { return _isEdited; }
+            set { _isEdited = value; OnPropertyChange("IsEdited"); }
+        }
 
         public bool IsExisting(NavObjectModel objectToCompare)
         {
@@ -214,6 +220,37 @@ namespace CSIDESourceControl.Models
             writer.Write(StringDate);
         }
 
+        public static string FilePathToInternalId(string filePath)
+        {
+            string internalId = string.Empty;
+
+            string[] fileSplit = filePath.Split('/');
+
+            foreach (string filename in fileSplit)
+            {
+                if (filename.Contains(".txt"))
+                {
+                    internalId = filename.Replace(".txt", string.Empty).ToUpper();
+                }
+            }
+
+            return internalId;
+        }
+
+        public static string PathToType(string filePath)
+        {
+            string[] fileSplit = filePath.Split('/');
+
+            if (fileSplit.Length == 2)
+            {
+                if (string.IsNullOrEmpty(fileSplit[1]))
+                    return fileSplit[0].ToUpper();
+            }
+
+            return string.Empty;
+        }
+
+
         private void WriteGenericList(List<string> list, ref BinaryWriter writer)
         {
             writer.Write(list.Count);
@@ -258,6 +295,16 @@ namespace CSIDESourceControl.Models
         }
 
         #endregion Serialize
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected void OnPropertyChange(string propertyName)
+        {
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
     }
 }
 

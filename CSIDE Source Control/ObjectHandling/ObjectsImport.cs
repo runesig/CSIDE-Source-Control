@@ -19,18 +19,44 @@ namespace CSIDESourceControl.ObjectHandling
 
         public Dictionary<string, NavObjectModel> NavObjects { get { return _navObjects;  } }
 
-        public void RunImport(string _filePath)
+        public List<NavObjectModel> GetObjectList()
         {
-            if (string.IsNullOrEmpty(_filePath))
+            if (_navObjects == null)
+                return new List<NavObjectModel>();
+
+            return _navObjects.Select(obj => obj.Value).ToList();
+        }
+
+        public void RunImportFromDestinationFolder(string destinationFolder)
+        {
+            if (!Directory.Exists(destinationFolder))
+                throw new Exception(string.Format("{0} folder does not exists.", destinationFolder));
+
+
+            foreach (string path in Directory.EnumerateDirectories(destinationFolder))
+            {
+                foreach (string filePath in Directory.EnumerateFiles(path))
+                {
+                    RunImportFromObjectFile(filePath);
+                }
+            }
+        }
+
+        public void RunImportFromObjectFile(string filePath)
+        {
+            if (string.IsNullOrEmpty(filePath))
                 return;
 
-            if (!File.Exists(_filePath))
+            if (!File.Exists(filePath))
+                return;
+
+            if (!IsTxtFile(filePath))
                 return;
 
             ObjectSection currObjectSection = ObjectSection.Unknown;
             NavObjectModel currNavObject = null;
 
-            var lines = File.ReadAllLines(_filePath, Encoding.Default);
+            var lines = File.ReadAllLines(filePath, Encoding.Default);
 
             int totalLineCount = lines.Length;
             for (int i = 0; i < totalLineCount; i++)
@@ -45,6 +71,13 @@ namespace CSIDESourceControl.ObjectHandling
             }
         }
 
+        private bool IsTxtFile(string filePath)
+        {
+            string extension = Path.GetExtension(filePath);
+
+            return extension.ToUpper().Contains("TXT");
+        }
+
         private void ProcessLine(string line, ObjectSection objectSection, ref NavObjectModel navObject)
         {
             switch (objectSection)
@@ -57,7 +90,8 @@ namespace CSIDESourceControl.ObjectHandling
                     navObject.ObjectProperties.Add(line);
                     break;
                 default:
-                    navObject.Code.Add(line);
+                    if(navObject != null) 
+                        navObject.Code.Add(line);
                     break;
                     //case ObjectSection.Properties:
                     //    navObject.Properties.Add(line);
@@ -76,7 +110,8 @@ namespace CSIDESourceControl.ObjectHandling
                     //    break;
             }
 
-            navObject.ObjectLines.Add(line);
+            if(navObject != null)
+                navObject.ObjectLines.Add(line);
         }
 
         private NavObjectModel CreateNewObject(string line, ObjectSection objectSection, NavObjectModel navObject)

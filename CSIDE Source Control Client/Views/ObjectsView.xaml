@@ -9,9 +9,9 @@
         Title="C/SIDE Source Control">
     <Fluent:RibbonWindow.Resources>
             <SolidColorBrush x:Key="BackgroundBrushClear" Color="White" />
-            <SolidColorBrush x:Key="BackgroundBrushUnequal" Color="Salmon" />
+            <SolidColorBrush x:Key="BackgroundBrushUnequal" Color="Gold" />
             <SolidColorBrush x:Key="BackgroundBrushUnexisting" Color="LemonChiffon" />
-            <SolidColorBrush x:Key="BackgroundBrushEdited" Color="Gold" />
+            <SolidColorBrush x:Key="BackgroundBrushEdited" Color="Salmon" />
             <SolidColorBrush x:Key="BackgroundBrush" Color="Azure" />
             <SolidColorBrush x:Key="BackgroundBrushSelected" Color="DodgerBlue" Opacity=".4"/>
             <SolidColorBrush x:Key="ForegroundBrushClear" Color="Black" />
@@ -216,6 +216,9 @@
                             <Style TargetType="DataGridCell">
                                 <Setter Property="Background" Value="{StaticResource BackgroundBrushClear}" />
                                 <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsEdited}" Value="True">
+                                        <Setter Property="Background" Value="{StaticResource BackgroundBrushEdited}" />
+                                    </DataTrigger>
                                     <Trigger Property="IsSelected" Value="True">
                                         <Setter Property="Background" Value="{StaticResource BackgroundBrushSelected}"/>
                                         <Setter Property="Foreground" Value="{StaticResource ForegroundBrushClear}" />
@@ -232,6 +235,9 @@
                             <Style TargetType="DataGridCell">
                                 <Setter Property="Background" Value="{StaticResource BackgroundBrushClear}" />
                                 <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsEdited}" Value="True">
+                                        <Setter Property="Background" Value="{StaticResource BackgroundBrushEdited}" />
+                                    </DataTrigger>
                                     <Trigger Property="IsSelected" Value="True">
                                         <Setter Property="Background" Value="{StaticResource BackgroundBrushSelected}" />
                                         <Setter Property="Foreground" Value="{StaticResource ForegroundBrushClear}" />
@@ -248,6 +254,9 @@
                             <Style TargetType="DataGridCell">
                                 <Setter Property="Background" Value="{StaticResource BackgroundBrushClear}" />
                                 <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsEdited}" Value="True">
+                                        <Setter Property="Background" Value="{StaticResource BackgroundBrushEdited}" />
+                                    </DataTrigger>
                                     <Trigger Property="IsSelected" Value="True">
                                         <Setter Property="Background" Value="{StaticResource BackgroundBrushSelected}"/>
                                         <Setter Property="Foreground" Value="{StaticResource ForegroundBrushClear}" />
@@ -264,6 +273,9 @@
                             <Style TargetType="DataGridCell">
                                 <Setter Property="Background" Value="{StaticResource BackgroundBrushClear}" />
                                 <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsEdited}" Value="True">
+                                        <Setter Property="Background" Value="{StaticResource BackgroundBrushEdited}" />
+                                    </DataTrigger>
                                     <Trigger Property="IsSelected" Value="True">
                                         <Setter Property="Background" Value="{StaticResource BackgroundBrushSelected}"/>
                                         <Setter Property="Foreground" Value="{StaticResource ForegroundBrushClear}" />
@@ -280,6 +292,9 @@
                             <Style TargetType="DataGridCell">
                                 <Setter Property="Background" Value="{StaticResource BackgroundBrush}" />
                                 <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsEdited}" Value="True">
+                                        <Setter Property="Background" Value="{StaticResource BackgroundBrushEdited}" />
+                                    </DataTrigger>
                                     <Trigger Property="IsSelected" Value="True">
                                         <Setter Property="Background" Value="{StaticResource BackgroundBrushSelected}"/>
                                         <Setter Property="Foreground" Value="{StaticResource ForegroundBrushClear}" />
@@ -296,6 +311,9 @@
                             <Style TargetType="DataGridCell">
                                 <Setter Property="Background" Value="{StaticResource BackgroundBrush}" />
                                 <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsEdited}" Value="True">
+                                        <Setter Property="Background" Value="{StaticResource BackgroundBrushEdited}" />
+                                    </DataTrigger>
                                     <Trigger Property="IsSelected" Value="True">
                                         <Setter Property="Background" Value="{StaticResource BackgroundBrushSelected}"/>
                                         <Setter Property="Foreground" Value="{StaticResource ForegroundBrushClear}" />
@@ -312,6 +330,9 @@
                             <Style TargetType="DataGridCell">
                                 <Setter Property="Background" Value="{StaticResource BackgroundBrush}" />
                                 <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsEdited}" Value="True">
+                                        <Setter Property="Background" Value="{StaticResource BackgroundBrushEdited}" />
+                                    </DataTrigger>
                                     <Trigger Property="IsSelected" Value="True">
                                         <Setter Property="Background" Value="{StaticResource BackgroundBrushSelected}"/>
                                         <Setter Property="Foreground" Value="{StaticResource ForegroundBrushClear}" />
@@ -328,6 +349,9 @@
                             <Style TargetType="DataGridCell">
                                 <Setter Property="Background" Value="{StaticResource BackgroundBrush}" />
                                 <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsEdited}" Value="True">
+                                        <Setter Property="Background" Value="{StaticResource BackgroundBrushEdited}" />
+                                    </DataTrigger>
                                     <Trigger Property="IsSelected" Value="True">
                                         <Setter Property="Background" Value="{StaticResource BackgroundBrushSelected}"/>
                                         <Setter Property="Foreground" Value="{StaticResource ForegroundBrushClear}" />

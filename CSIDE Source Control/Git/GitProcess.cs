@@ -3,6 +3,9 @@ using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using System.ComponentModel;
+using System.IO;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace CSIDESourceControl.Git
 {
@@ -43,6 +46,53 @@ namespace CSIDESourceControl.Git
             {
                 throw (ex);
             }
+        }
+
+        public static List<string> CheckModifiedFilesFromOutput(string gitOutput)
+        {
+            List<string> modifiedFiles = new List<string>();
+
+            using (StringReader reader = new StringReader(gitOutput))
+            {
+                string line;
+                while ((line = reader.ReadLine()) != null)
+                {
+                    CheckFileExtension(modifiedFiles, line, ".txt");
+                    CheckFileExtension(modifiedFiles, line, "Table/");
+                    CheckFileExtension(modifiedFiles, line, "Page/");
+                    CheckFileExtension(modifiedFiles, line, "Form/");
+                    CheckFileExtension(modifiedFiles, line, "Codeunit/");
+                    CheckFileExtension(modifiedFiles, line, "Report/");
+                    CheckFileExtension(modifiedFiles, line, "Dataport/");
+                    CheckFileExtension(modifiedFiles, line, "XMLport/");
+                    CheckFileExtension(modifiedFiles, line, "Query/");
+                    CheckFileExtension(modifiedFiles, line, "MenuSuite/");
+                }
+            }
+
+            return modifiedFiles;
+        }
+
+        private static void CheckFileExtension(List<string> modifiedFiles, string line, string extension)
+        {
+            if (line.Contains(extension))
+            {
+                DeleteVerbsFromLine(ref line);
+
+                string filename = line.Trim();
+
+                bool containsItem = modifiedFiles.Any(item => item == filename);
+
+                if(!containsItem)
+                    modifiedFiles.Add(filename);
+            }
+        }
+
+        private static void DeleteVerbsFromLine(ref string line)
+        {
+            line = line.Replace("modified:", string.Empty).Trim();
+            line = line.Replace("deleted:", string.Empty).Trim();
+            line = line.Replace("added:", string.Empty).Trim();
         }
 
         public static async Task<GitResult> ExcecuteASync(string directory, string command)

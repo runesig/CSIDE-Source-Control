@@ -59,6 +59,8 @@
     <Compile Include="Models\ExportFilterModel.cs" />
     <Compile Include="Models\ServerSetupModel.cs" />
     <Compile Include="Models\SettingsModel.cs" />
+    <Compile Include="ObjectHandling\Compare.cs" />
+    <Compile Include="ObjectHandling\NavObjectsCompared.cs" />
     <Compile Include="ObjectHandling\ObjectsExport.cs" />
     <Compile Include="ObjectHandling\ObjectsImport.cs" />
     <Compile Include="Models\NavObjectModel.cs" />

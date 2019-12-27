@@ -52,6 +52,7 @@ namespace CSIDESourceControl.Client.ViewModels
             _navObjects = new ObservableCollection<NavObjectModel>();
 
             LoadRecentFolder();
+            LoadFromDestinationFolder();
         }
 
         public ObservableCollection<NavObjectModel> NavObjects
@@ -263,6 +264,7 @@ namespace CSIDESourceControl.Client.ViewModels
 
             GitGetRemote();
             SaveRecentFolder();
+            LoadFromDestinationFolder();
         }
 
         private void ServerSettings()
@@ -310,9 +312,6 @@ namespace CSIDESourceControl.Client.ViewModels
 
         private void ImportFiles(string[] filePaths)
         {
-            if (!IsDestinationFolderSet())
-                return;
-
             if (filePaths == null)
                 return;
 
@@ -323,18 +322,20 @@ namespace CSIDESourceControl.Client.ViewModels
             {
                 if (filePaths.Length > 0)
                 {
+                    // First import the "big" object file
                     string filePath = filePaths[0];
-                    ObjectsImport import = new ObjectsImport();
-                    import.RunImport(filePath);
+                    ObjectsImport initImport = new ObjectsImport();
+                    initImport.RunImportFromObjectFile(filePath);
+
+                    // Export in folders to new destination
+                    ObjectsExport.ExportObjects(initImport.GetObjectList(), DestinationFolder);
+
+                    // Now reimport from new destination to get all files
+                    LoadFromDestinationFolder();
 
                     GitOutput = string.Format("Import success");
-
-                    // Removes everything and adds new objects
-                    NavObjects = new ObservableCollection<NavObjectModel>(import.NavObjects.Values);
                 }
 
-                // Export to new destination
-                ObjectsExport.ExportObjects(NavObjects.ToList<NavObjectModel>(), DestinationFolder);
             }
             catch (Exception ex)
             {
@@ -419,6 +420,7 @@ namespace CSIDESourceControl.Client.ViewModels
             }
             finally
             {
+                SetModifiedFiles(new List<string>()); // Clear
                 IsWorking = false;
             }
         }
@@ -470,6 +472,10 @@ namespace CSIDESourceControl.Client.ViewModels
 
                 CheckGitOutput(output);
                 GitOutput = output;
+
+                List<string> modifiedFiles = GitProcess.CheckModifiedFilesFromOutput(output);
+                SetModifiedFiles(modifiedFiles);
+
             }
             catch (Exception ex)
             {
@@ -653,6 +659,35 @@ namespace CSIDESourceControl.Client.ViewModels
             ));
 
             backgroundThread.Start();
+        }
+
+        private void LoadFromDestinationFolder()
+        {
+            if (string.IsNullOrEmpty(DestinationFolder))
+                return;
+
+            ObjectsImport import = new ObjectsImport();
+            import.RunImportFromDestinationFolder(DestinationFolder);
+
+            // Removes everything and adds new objects to collection for viewing in appliaction
+            NavObjects = new ObservableCollection<NavObjectModel>(import.NavObjects.Values);
+        }
+
+        private void SetModifiedFiles(List<string> modifiedFiles)
+        {
+            foreach (NavObjectModel navObject in NavObjects)
+            {
+                navObject.IsEdited = false;
+
+                foreach (string modifiedFile in modifiedFiles)
+                {
+                    if (navObject.Type.ToUpper() == NavObjectModel.PathToType(modifiedFile))
+                        navObject.IsEdited = true;
+
+                    if (navObject.InternalId.ToUpper() == NavObjectModel.FilePathToInternalId(modifiedFile))
+                        navObject.IsEdited = true;
+                }
+            }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
