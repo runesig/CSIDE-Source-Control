@@ -16,7 +16,7 @@ namespace CSIDESourceControl.ObjectHandling
             {
                 CreateDirectoryIfNotExists(filePath, navObject);
 
-                string fullPath = GetFullPath(filePath, navObject);
+                string fullPath = navObject.GetFullPath(filePath);
 
                 using (StreamWriter textObject = new StreamWriter(fullPath, false, Encoding.Default))
                 {
@@ -30,19 +30,9 @@ namespace CSIDESourceControl.ObjectHandling
 
         private static void CreateDirectoryIfNotExists(string filePath, NavObjectModel navObject)
         {
-            string folder = GetDirectoryPath(filePath, navObject);
+            string folder = navObject.GetDirectoryPath(filePath);
             if (!Directory.Exists(folder))
                 Directory.CreateDirectory(folder);
-        }
-
-        private static string GetDirectoryPath(string filePath, NavObjectModel navObject)
-        {
-            return string.Format(@"{0}\{1}", filePath, navObject.Type);
-        }
-
-        private static string GetFullPath(string filePath, NavObjectModel navObject)
-        {
-            return string.Format(@"{0}\{1}\{2}.txt", filePath, navObject.Type, navObject.InternalId);
         }
     }
 }

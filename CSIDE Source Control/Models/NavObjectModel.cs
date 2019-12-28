@@ -294,6 +294,16 @@ namespace CSIDESourceControl.Models
             return list;
         }
 
+        public string GetFullPath(string path)
+        {
+            return string.Format(@"{0}\{1}\{2}.txt", path, Type, InternalId);
+        }
+
+        public string GetDirectoryPath(string path)
+        {
+            return string.Format(@"{0}\{1}", path, Type);
+        }
+
         #endregion Serialize
 
         public event PropertyChangedEventHandler PropertyChanged;

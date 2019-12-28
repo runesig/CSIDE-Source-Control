@@ -324,18 +324,18 @@ namespace CSIDESourceControl.Client.ViewModels
                 {
                     // First import the "big" object file
                     string filePath = filePaths[0];
-                    ObjectsImport initImport = new ObjectsImport();
-                    initImport.RunImportFromObjectFile(filePath);
+                    ObjectsImport objectFileImport = new ObjectsImport();
+                    objectFileImport.RunImportFromObjectFile(filePath);
+                    objectFileImport.CleanUpRemovedFiles(DestinationFolder);
 
                     // Export in folders to new destination
-                    ObjectsExport.ExportObjects(initImport.GetObjectList(), DestinationFolder);
+                    ObjectsExport.ExportObjects(objectFileImport.GetObjectList(), DestinationFolder);
 
                     // Now reimport from new destination to get all files
                     LoadFromDestinationFolder();
 
                     GitOutput = string.Format("Import success");
                 }
-
             }
             catch (Exception ex)
             {

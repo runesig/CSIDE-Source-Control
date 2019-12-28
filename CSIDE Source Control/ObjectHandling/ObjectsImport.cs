@@ -71,6 +71,24 @@ namespace CSIDESourceControl.ObjectHandling
             }
         }
 
+        public void CleanUpRemovedFiles(string destinationFolder)
+        {
+            ObjectsImport importExisting = new ObjectsImport();
+            importExisting.RunImportFromDestinationFolder(destinationFolder);
+
+            foreach (KeyValuePair<string, NavObjectModel> entry in importExisting.NavObjects)
+            {
+                if (!NavObjects.ContainsKey(entry.Key))
+                    RemoveFile(entry.Value, destinationFolder);
+            }
+        }
+
+        private static void RemoveFile(NavObjectModel navObjectModel, string destinationFolder)
+        {
+            if (File.Exists(navObjectModel.GetFullPath(destinationFolder)))
+                File.Delete(navObjectModel.GetFullPath(destinationFolder));
+        }
+
         private bool IsTxtFile(string filePath)
         {
             string extension = Path.GetExtension(filePath);
