@@ -56,7 +56,8 @@ namespace CSIDESourceControl.ExportFinexe
         {
             string versionListFilter = string.Empty;
             if (!string.IsNullOrEmpty(versionList))
-                versionListFilter = string.Format(@"Version List={0}", versionList);
+                versionListFilter = string.Format("\"Version List={0}\"", versionList);
+
             return versionListFilter;
         }
 
@@ -65,15 +66,15 @@ namespace CSIDESourceControl.ExportFinexe
             string dateFilter = string.Empty;
             if ((dateFrom.HasValue) && (dateTo.HasValue))
             {
-                dateFilter = string.Format("Date={0}..{1}", dateFrom?.ToShortDateString(), dateTo?.ToShortDateString());
+                dateFilter = string.Format("\"Date={0}..{1}\"", dateFrom?.ToShortDateString(), dateTo?.ToShortDateString());
             }
             else if ((dateFrom.HasValue) && (!dateTo.HasValue))
             {
-                dateFilter = string.Format("Date={0}", dateFrom?.ToShortDateString());
+                dateFilter = string.Format("\"Date={0}\"", dateFrom?.ToShortDateString());
             }
             else if ((!dateFrom.HasValue) && (dateTo.HasValue))
             {
-                dateFilter = string.Format("Date=..{0}", dateTo?.ToShortDateString());
+                dateFilter = string.Format("\"Date=..{0}\"", dateTo?.ToShortDateString());
             }
 
             return dateFilter;
@@ -83,7 +84,7 @@ namespace CSIDESourceControl.ExportFinexe
         {
             string modifiedFilter = string.Empty;
             if ((modified.HasValue) && (modified.Value == true))
-                modifiedFilter = @"Modified=yes";
+                modifiedFilter = "Modified=yes";
 
             return modifiedFilter;
         }

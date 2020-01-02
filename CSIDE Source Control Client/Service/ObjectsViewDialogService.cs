@@ -59,7 +59,7 @@ namespace CSIDESourceControl.Client.Service
                     CheckFileExists = true,
                     CheckPathExists = true,
                     Title = "Open NAV Object File",
-                    Filter = "Txt files|*.txt",
+                    Filter = "Object files|*.txt",
                     Multiselect = false
                 };
 

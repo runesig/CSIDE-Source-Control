@@ -663,14 +663,23 @@ namespace CSIDESourceControl.Client.ViewModels
 
         private void LoadFromDestinationFolder()
         {
-            if (string.IsNullOrEmpty(DestinationFolder))
-                return;
+            try
+            {
+                if (string.IsNullOrEmpty(DestinationFolder))
+                    return;
 
-            ObjectsImport import = new ObjectsImport();
-            import.RunImportFromDestinationFolder(DestinationFolder);
+                ObjectsImport import = new ObjectsImport();
+                import.RunImportFromDestinationFolder(DestinationFolder);
 
-            // Removes everything and adds new objects to collection for viewing in appliaction
-            NavObjects = new ObservableCollection<NavObjectModel>(import.NavObjects.Values);
+                // Removes everything and adds new objects to collection for viewing in appliaction
+                NavObjects = new ObservableCollection<NavObjectModel>(import.NavObjects.Values);
+            }
+            catch (Exception ex)
+            {
+                DestinationFolder = string.Empty;
+
+                _dialogService.ShowErrorMessage("Destination Folder Error", ex.Message);
+            }
         }
 
         private void SetModifiedFiles(List<string> modifiedFiles)

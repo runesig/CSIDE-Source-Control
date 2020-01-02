@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:CSIDESourceControl.Client.Views"
         xmlns:helpers="clr-namespace:CSIDESourceControl.Client.Helpers"
         mc:Ignorable="d"
-        Title="Import Object Files" Height="400" Width="400">
+        Title="Import Object Files" Height="400" Width="700">
     <Window.Resources>
         <BitmapImage x:Key="SettingsImageSource" UriSource="../Views/Images/Settings.png" />
     </Window.Resources>
