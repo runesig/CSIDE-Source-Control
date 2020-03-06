@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.Text.RegularExpressions;
 using CSIDESourceControl.Helpers;
 
 namespace CSIDESourceControl.Models
@@ -296,12 +297,18 @@ namespace CSIDESourceControl.Models
 
         public string GetFullPath(string path)
         {
-            return string.Format(@"{0}\{1}\{2}.txt", path, Type, InternalId);
+            return string.Format(@"{0}\{1}\{2}-{3}.txt", path, Type, InternalId, GetValidFileFormattedObjectName(Name));
         }
 
         public string GetDirectoryPath(string path)
         {
             return string.Format(@"{0}\{1}", path, Type);
+        }
+
+        private string GetValidFileFormattedObjectName(string name)
+        {
+            Regex illegalInFileName = new Regex(string.Format("[{0}]", Regex.Escape(new string(Path.GetInvalidFileNameChars()))), RegexOptions.Compiled);
+            return illegalInFileName.Replace(name, "_");
         }
 
         #endregion Serialize
