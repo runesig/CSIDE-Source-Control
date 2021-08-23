@@ -11,7 +11,11 @@ namespace CSIDESourceControl.Models
     {
         [JsonProperty(PropertyName = "cside_environment")]
         public ServerSetupModel ServerSetupModel { get; set; }
+
         [JsonProperty(PropertyName = "filter")]
         public ExportFilterModel ExportFilterModel { get; set; }
+
+        [JsonProperty(PropertyName = "git")]
+        public GitSettingsModel GitSettingsModel { get; set; }
     }
 }

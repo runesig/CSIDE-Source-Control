@@ -63,11 +63,10 @@ namespace CSIDESourceControl.ExportFinexe.StatusFiles
 
         private ResultStatus GetResultStatus(string part)
         {
-            int statusInt = -1;
-            if (!int.TryParse(part, out statusInt))
+            if (!int.TryParse(part, out int statusInt))
                 statusInt = -1;
 
-            switch(statusInt)
+            switch (statusInt)
             {
                 case -1:
                     return ResultStatus.Unknown;
@@ -82,8 +81,7 @@ namespace CSIDESourceControl.ExportFinexe.StatusFiles
         
         private DateTime GetResultDate(string part)
         {
-            DateTime resultDate = DateTime.Now;
-            if (!DateTime.TryParse(part, out resultDate))
+            if (!DateTime.TryParse(part, out DateTime resultDate))
                 resultDate = DateTime.Now;
 
             return resultDate;

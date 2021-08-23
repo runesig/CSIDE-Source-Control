@@ -179,7 +179,7 @@ namespace CSIDESourceControl.Models
             if (System.Object.ReferenceEquals(a, b))
                 return true;
 
-            if (((object)a == null) || ((object)b == null))
+            if ((a is null) || (b is null))
                 return false;
 
             return a.InternalId == b.InternalId;
@@ -310,10 +310,7 @@ namespace CSIDESourceControl.Models
 
         protected void OnPropertyChange(string propertyName)
         {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-            }
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

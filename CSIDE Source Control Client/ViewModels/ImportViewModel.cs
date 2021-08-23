@@ -17,8 +17,8 @@ namespace CSIDESourceControl.Client.ViewModels
     public class ImportViewModel : INotifyPropertyChanged
     {
         private RelayCommand<object> _showServerSetupDialog;
-        private ExportFilterModel _exportFilter;
-        private string _destinationFolder;
+        private readonly ExportFilterModel _exportFilter;
+        private readonly string _destinationFolder;
 
         public ImportViewModel(ExportFilterModel exportFilter, string destinationFolder)
         {
@@ -44,20 +44,23 @@ namespace CSIDESourceControl.Client.ViewModels
             SettingsHelper settingsHelper = new SettingsHelper(_destinationFolder);
             ServerSetupModel currentServerSetup = settingsHelper.ReadServerSettings();
             ExportFilterModel exportFilter = settingsHelper.ReadFilterSettings();
+            GitSettingsModel gitSettingsModel = settingsHelper.ReadGitSettings();
 
             // TODO: not part of MVVM Start
             ServerSetupDialogService dialogService = new ServerSetupDialogService();
             ServerSetupViewModel viewModel = new ServerSetupViewModel(dialogService, currentServerSetup);
 
-            ServerSetupView view = new ServerSetupView();
-            view.DataContext = viewModel;
+            ServerSetupView view = new ServerSetupView
+            {
+                DataContext = viewModel
+            };
             // TODO: not part of MVVM Stop
 
             bool? dialogResult = view.ShowDialog();
             currentServerSetup = viewModel.ServerSetup;
 
             if ((dialogResult.HasValue) && (dialogResult.Value))
-                settingsHelper.SerializeToSettingsFile(currentServerSetup, exportFilter);
+                settingsHelper.SerializeToSettingsFile(currentServerSetup, exportFilter, gitSettingsModel);
         }
 
         public ExportFilterModel GetImportFilters()
@@ -116,10 +119,7 @@ namespace CSIDESourceControl.Client.ViewModels
 
         protected void OnPropertyChange(string propertyName)
         {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-            }
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

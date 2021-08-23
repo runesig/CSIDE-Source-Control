@@ -15,8 +15,8 @@ namespace CSIDESourceControl.Client.ViewModels
     {
         private RelayCommand<object> _showOpenFinExeDialog;
 
-        private IServerSetupDialogService _dialogService;
-        private ServerSetupModel _serverSetup;
+        private readonly IServerSetupDialogService _dialogService;
+        private readonly ServerSetupModel _serverSetup;
         private bool _enableEditCredentials;
 
         public ServerSetupViewModel(IServerSetupDialogService dialogService, ServerSetupModel serverSetup)
@@ -99,10 +99,7 @@ namespace CSIDESourceControl.Client.ViewModels
 
         protected void OnPropertyChange(string propertyName)
         {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-            }
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

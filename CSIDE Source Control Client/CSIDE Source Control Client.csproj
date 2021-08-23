@@ -56,11 +56,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>0599178F08AF9DAFD8658D21CCA36BE0E588C069</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>70D3194EB5CE84A97F9EE531908CB0A2B4CE3E57</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestKeyFile>
-    </ManifestKeyFile>
+    <ManifestKeyFile>CSIDE Source Control Client_TemporaryKey.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
     <GenerateManifests>true</GenerateManifests>
@@ -234,6 +233,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Views\Images\Settings.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Info.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

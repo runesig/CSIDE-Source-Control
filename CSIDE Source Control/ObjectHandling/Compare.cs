@@ -9,15 +9,14 @@ namespace CSIDESourceControl.ObjectHandling
 {
     public class Compare
     {
-        private Dictionary<string, NavObjectModel> _currentNavObjects;
-        private Dictionary<string, NavObjectModel> _newNavObjects;
+        private readonly Dictionary<string, NavObjectModel> _currentNavObjects;
+        private readonly Dictionary<string, NavObjectModel> _newNavObjects;
 
         public Dictionary<string, NavObjectModel> CurrentNavObjects { get { return _currentNavObjects; } }
         public Dictionary<string, NavObjectModel> NewNavObjects { get { return _newNavObjects; } }
 
-        private Dictionary<string, NavObjectsCompared> _objectsComparedDict = new Dictionary<string, NavObjectsCompared>();
+        private readonly Dictionary<string, NavObjectsCompared> _objectsComparedDict = new Dictionary<string, NavObjectsCompared>();
 
-        private int _counter = 0;
 
         public Compare(Dictionary<string, NavObjectModel> currentNavObjects, Dictionary<string, NavObjectModel> newNavObjects)
         {
@@ -31,7 +30,6 @@ namespace CSIDESourceControl.ObjectHandling
             {
                 FindDifferencesCurrent(internalId);
 
-                _counter++;
                 FireCompareEvent();
             }
 
@@ -39,7 +37,6 @@ namespace CSIDESourceControl.ObjectHandling
             {
                 FindDifferencesNew(internalId);
 
-                _counter++;
                 FireCompareEvent();
             }
         }
@@ -54,7 +51,7 @@ namespace CSIDESourceControl.ObjectHandling
                 Id = navObjectCurrent.Id,
                 Type = navObjectCurrent.Type,
                 Name = navObjectCurrent.Name,
-                Edited = (navObjectCurrent == null ? false : navObjectCurrent.IsEdited) || (navObjectNew == null ? false : navObjectNew.IsEdited)
+                Edited = (navObjectCurrent != null && navObjectCurrent.IsEdited) || (navObjectNew != null && navObjectNew.IsEdited)
             };
 
             GetDifference(navObjectCurrent, navObjectNew, newObjectsCompared);
@@ -75,7 +72,7 @@ namespace CSIDESourceControl.ObjectHandling
                 Id = navObjectNew.Id,
                 Type = navObjectNew.Type,
                 Name = navObjectNew.Name,
-                Edited = (navObjectNew == null ? false : navObjectNew.IsEdited) || (navObjectCurrent == null ? false : navObjectCurrent.IsEdited)
+                Edited = (navObjectNew != null && navObjectNew.IsEdited) || (navObjectCurrent != null && navObjectCurrent.IsEdited)
             };
 
             GetDifference(navObjectNew, navObjectCurrent, newObjectsCompared);

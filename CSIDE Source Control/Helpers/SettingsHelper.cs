@@ -13,6 +13,7 @@ namespace CSIDESourceControl.Helpers
         public static string SettingsSubFolder = ".csc";
         public static string CSideEnvironmentSetting = "cside_environment";
         public static string FilterSetting = "filter";
+        public static string GitSetting = "git";
 
         public string Folder { get; }
 
@@ -47,6 +48,19 @@ namespace CSIDESourceControl.Helpers
             }
         }
 
+        public GitSettingsModel ReadGitSettings()
+        {
+            string filePath = GetSettingsFilePath();
+
+            if (!File.Exists(filePath))
+                return new GitSettingsModel();
+
+            using (StreamReader streamReader = new StreamReader(filePath))
+            {
+                return GetFirstInstance<GitSettingsModel>(GitSetting, streamReader);
+            }
+        }
+
         public T GetFirstInstance<T>(string propertyName, StreamReader streamReader)
         {
             using (var jsonReader = new JsonTextReader(streamReader))
@@ -63,11 +77,11 @@ namespace CSIDESourceControl.Helpers
                     }
                 }
 
-                return default(T);
+                return default;
             }
         }
 
-        public void SerializeToSettingsFile(ServerSetupModel serverSetupModel, ExportFilterModel exportFilterModel)
+        public void SerializeToSettingsFile(ServerSetupModel serverSetupModel, ExportFilterModel exportFilterModel, GitSettingsModel gitSettingsModel)
         {
             if (string.IsNullOrEmpty(Folder) || string.IsNullOrEmpty(SettingsSubFolder))
                 return;
@@ -75,9 +89,12 @@ namespace CSIDESourceControl.Helpers
             DirectoryInfo di = Directory.CreateDirectory(GetSettingsFolder());
             di.Attributes = FileAttributes.Directory | FileAttributes.Hidden;
 
-            SettingsModel model = new SettingsModel();
-            model.ServerSetupModel = serverSetupModel;
-            model.ExportFilterModel = exportFilterModel;
+            SettingsModel model = new SettingsModel
+            {
+                ServerSetupModel = serverSetupModel,
+                ExportFilterModel = exportFilterModel,
+                GitSettingsModel = gitSettingsModel
+            };
 
             string settingsString = JsonConvert.SerializeObject(model);
 

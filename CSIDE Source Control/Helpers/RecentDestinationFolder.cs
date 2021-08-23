@@ -9,7 +9,7 @@ namespace CSIDESourceControl.Helpers
 {
     public static class RecentDestinationFolder
     {
-        private static string RecentFolderKey = "RecentFolder";
+        private static readonly string RecentFolderKey = "RecentFolder";
 
         public static void Save(Configuration config, string folder)
         {

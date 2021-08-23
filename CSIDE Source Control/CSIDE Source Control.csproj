@@ -57,6 +57,7 @@
     <Compile Include="Helpers\RecentDestinationFolder.cs" />
     <Compile Include="Helpers\SettingsHelper.cs" />
     <Compile Include="Models\ExportFilterModel.cs" />
+    <Compile Include="Models\GitSettingsModel.cs" />
     <Compile Include="Models\ServerSetupModel.cs" />
     <Compile Include="Models\SettingsModel.cs" />
     <Compile Include="ObjectHandling\Compare.cs" />
