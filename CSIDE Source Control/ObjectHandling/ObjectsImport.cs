@@ -37,12 +37,12 @@ namespace CSIDESourceControl.ObjectHandling
             {
                 foreach (string filePath in Directory.EnumerateFiles(path))
                 {
-                    RunImportFromObjectFile(filePath);
+                    RunImportFromOneSingleObjectFile(filePath);
                 }
             }
         }
 
-        public void RunImportFromObjectFile(string filePath)
+        public void RunImportFromOneSingleObjectFile(string filePath)
         {
             if (string.IsNullOrEmpty(filePath))
                 return;
@@ -69,31 +69,6 @@ namespace CSIDESourceControl.ObjectHandling
 
                 // FireFileReadEvent(i, totalLineCount);
             }
-        }
-
-        public void CleanUpRemovedFiles(string destinationFolder)
-        {
-            ObjectsImport importExisting = new ObjectsImport();
-            importExisting.RunImportFromDestinationFolder(destinationFolder);
-
-            foreach (KeyValuePair<string, NavObjectModel> entry in importExisting.NavObjects)
-            {
-                if (!NavObjects.ContainsKey(entry.Key))
-                    RemoveFile(entry.Value, destinationFolder);
-            }
-        }
-
-        private static void RemoveFile(NavObjectModel navObjectModel, string destinationFolder)
-        {
-            if (File.Exists(navObjectModel.GetFullPath(destinationFolder)))
-                File.Delete(navObjectModel.GetFullPath(destinationFolder));
-        }
-
-        private bool IsTxtFile(string filePath)
-        {
-            string extension = Path.GetExtension(filePath);
-
-            return extension.ToUpper().Contains("TXT");
         }
 
         private void ProcessLine(string line, ObjectSection objectSection, ref NavObjectModel navObject)
@@ -138,7 +113,14 @@ namespace CSIDESourceControl.ObjectHandling
             if (newNavObject != null)
             {
                 navObject = newNavObject;
-                _navObjects.Add(newNavObject.InternalId, newNavObject);
+                if (!_navObjects.ContainsKey(newNavObject.InternalId))
+                    _navObjects.Add(newNavObject.InternalId, newNavObject);
+                else
+                {
+                    // Overwrite with the latest
+                    _navObjects[newNavObject.InternalId] = newNavObject;
+                }
+
             }
 
             return navObject;
@@ -187,6 +169,47 @@ namespace CSIDESourceControl.ObjectHandling
                     navObject.VersionList = ObjectHelper.GetVersionList(line, parts[0]);
                     break;
             }
+        }
+
+        public bool IsRemovedFiles(string destinationFolder, out int noOfRemovedFiles)
+        {
+            noOfRemovedFiles = 0;
+
+            ObjectsImport importExisting = new ObjectsImport();
+            importExisting.RunImportFromDestinationFolder(destinationFolder);
+
+            foreach (KeyValuePair<string, NavObjectModel> entry in importExisting.NavObjects)
+            {
+                if (!NavObjects.ContainsKey(entry.Key))
+                    noOfRemovedFiles++;
+            }
+
+            return (noOfRemovedFiles != 0);
+        }
+
+        public void CleanUpRemovedFiles(string destinationFolder)
+        {
+            ObjectsImport importExisting = new ObjectsImport();
+            importExisting.RunImportFromDestinationFolder(destinationFolder);
+
+            foreach (KeyValuePair<string, NavObjectModel> entry in importExisting.NavObjects)
+            {
+                if (!NavObjects.ContainsKey(entry.Key))
+                    RemoveFile(entry.Value, destinationFolder);
+            }
+        }
+
+        private static void RemoveFile(NavObjectModel navObjectModel, string destinationFolder)
+        {
+            if (File.Exists(navObjectModel.GetFullPath(destinationFolder)))
+                File.Delete(navObjectModel.GetFullPath(destinationFolder));
+        }
+
+        private bool IsTxtFile(string filePath)
+        {
+            string extension = Path.GetExtension(filePath);
+
+            return extension.ToUpper().Contains("TXT");
         }
     }
 }

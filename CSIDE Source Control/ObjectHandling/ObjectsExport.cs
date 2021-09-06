@@ -10,7 +10,7 @@ namespace CSIDESourceControl.ObjectHandling
 {
     public class ObjectsExport
     {
-        public static void ExportObjects(List<NavObjectModel> objects, string filePath)
+        public static void ExportObjectsToSeparateFolders(List<NavObjectModel> objects, string filePath)
         {
             foreach (NavObjectModel navObject in objects)
             {

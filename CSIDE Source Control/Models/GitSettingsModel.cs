@@ -11,10 +11,10 @@ namespace CSIDESourceControl.Models
     {
         public GitSettingsModel()
         {
-            Branch = "master"; // master default value
+            DefaultBranch = "master"; // master default value
         }
 
-        [JsonProperty(PropertyName = "branch")]
-        public string Branch { get; set; }
+        [JsonProperty(PropertyName = "default_branch")]
+        public string DefaultBranch { get; set; }
     }
 }

@@ -59,7 +59,9 @@
                     </Fluent:Backstage>
                 </Fluent:Ribbon.Menu>
                 <!--Tabs-->
-                <Fluent:RibbonTabItem Header="Process">
+                
+                <!-- Git Start-->
+                <Fluent:RibbonTabItem Header="Git">
                     <Fluent:RibbonGroupBox Header="Commit">
                         <Grid>
                             <Grid.ColumnDefinitions>
@@ -83,25 +85,40 @@
                         <Fluent:Button Name="buttonSyncSynchronize" Header="Sync" ToolTip="Sync (Pull and Push)" Icon="Views\Images\Recurring.png" LargeIcon="Views\Images\Recurring.png" Command="{Binding Path=GitSyncCommand}" />
                         <Fluent:Button Name="buttonPush" Header="Push" ToolTip="Push" SizeDefinition="Middle" Icon="Views\Images\News-Publish.png" LargeIcon="Views\Images\News-Publish.png" Command="{Binding Path=GitPushCommand}" />
                         <Fluent:Button Name="buttonPull" Header="Pull" ToolTip="Pull" SizeDefinition="Middle" Icon="Views\Images\News-Tick.png" LargeIcon="Views\Images\News-Tick.png" Command="{Binding Path=GitPullCommand}" />
-                        <Fluent:Button Name="buttonRemote" Header="Remote" ToolTip="Set Git Remote" SizeDefinition="Middle" Icon="Views\Images\Link.png" LargeIcon="Views\Images\Link.png" Command="{Binding Path=GitSetRemoteCommand}" />
+                        <Fluent:Button Name="buttonRemote" Header="Set Git Remote" ToolTip="Set Git Remote" SizeDefinition="Middle" Icon="Views\Images\Link.png" LargeIcon="Views\Images\Link.png" Command="{Binding Path=GitSetRemoteCommand}" />
                     </Fluent:RibbonGroupBox>
                     <Fluent:RibbonGroupBox Header="Status">
                         <Fluent:Button Name="buttonStatus" Header="Status" ToolTip="Status" SizeDefinition="Large" Icon="Views\Images\Importance-High.png" LargeIcon="Views\Images\Importance-High.png" Command="{Binding Path=GitStatusCommand}"/>
                     </Fluent:RibbonGroupBox>
-                    <Fluent:RibbonGroupBox Header="Objects">
-                        <Fluent:Button Name="buttonImport" Header="Import" ToolTip="Import" SizeDefinition="Large" Icon="Views\Images\Importance-Low.png" LargeIcon="Views\Images\Importance-Low.png" Command="{Binding Path=ImportFinexeFileCommand}" />
-                        <Fluent:Button Name="buttonOpenFromFolder" Header="Open File" ToolTip="Open Object File" SizeDefinition="Middle" Icon="Views\Images\Archive.png" LargeIcon="Views\Images\Archive.png" Command="{Binding Path=ShowOpenFileDialog}" />
-                    </Fluent:RibbonGroupBox>
-                </Fluent:RibbonTabItem>
-                <Fluent:RibbonTabItem Header="Repository Setup">
                     <Fluent:RibbonGroupBox Header="Repository">
                         <Fluent:Button Name="buttonInit" Header="Init Git Repository" ToolTip="Initialize new repo" SizeDefinition="Large" Icon="Views\Images\Milestone-New.png" LargeIcon="Views\Images\Milestone-New.png" Command="{Binding Path=GitInitCommand}"/>
                     </Fluent:RibbonGroupBox>
+                </Fluent:RibbonTabItem>
+                <!-- Git Stop-->
+
+                <!-- Import Start -->
+                <Fluent:RibbonTabItem Header="Import">
+                    <Fluent:RibbonGroupBox Header="Objectfile">
+                        <Fluent:Button Name="buttonOpenFromFolder" Header="Import from File" ToolTip="Import Objects from File" SizeDefinition="Large" Icon="Views\Images\Archive.png" LargeIcon="Views\Images\Archive.png" Command="{Binding Path=ShowOpenFileDialog}" />
+                    </Fluent:RibbonGroupBox>
+                    <Fluent:RibbonGroupBox Header="Server">
+                        <Fluent:Button Name="buttonImport" Header="Import from Server" ToolTip="Import Objects from Server" SizeDefinition="Large" Icon="Views\Images\Importance-Low.png" LargeIcon="Views\Images\Importance-Low.png" Command="{Binding Path=ImportFinexeFileCommand}" />
+                    </Fluent:RibbonGroupBox>
+                </Fluent:RibbonTabItem>
+                <!-- Import Stop -->
+
+
+                <!-- Setup Start -->
+                <Fluent:RibbonTabItem Header="Setup">
                     <Fluent:RibbonGroupBox Header="Folder">
-                        <Fluent:Button Name="buttonDestinationFolder" Header="Set Destination Folder" ToolTip="Initialize new repo" SizeDefinition="Large" Icon="Views\Images\Folder-Out Box.png" LargeIcon="Views\Images\Folder-Out Box.png" Command="{Binding Path=ShowSelectDestinationFolder}"/>
+                        <Fluent:Button Name="buttonDestinationFolder" Header="Set Working Folder" ToolTip="Set Working/Destination Folder" SizeDefinition="Large" Icon="Views\Images\Folder-Out Box.png" LargeIcon="Views\Images\Folder-Out Box.png" Command="{Binding Path=ShowSelectDestinationFolder}"/>
+                    </Fluent:RibbonGroupBox>
+                    <Fluent:RibbonGroupBox Header="Server">
                         <Fluent:Button Name="buttonSettings" Header="Server Setup" ToolTip="Server Setup" SizeDefinition="Large" Icon="Views\Images\Settings.png" LargeIcon="Views\Images\Settings.png" Command="{Binding Path=ShowServerSettings}"/>
                     </Fluent:RibbonGroupBox>
                 </Fluent:RibbonTabItem>
+                <!-- Setup Stop -->
+                
             </Fluent:Ribbon>
 
             <!--<StackPanel Grid.Column="0" Grid.Row="0">
@@ -375,7 +392,9 @@
                                 <ColumnDefinition Width="400" />
                                 <ColumnDefinition Width="5" />
                                 <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="5" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="5" />
                                 <ColumnDefinition Width="100" />
                             </Grid.ColumnDefinitions>
                         </Grid>
@@ -389,10 +408,17 @@
                     <TextBlock x:Name="RemoteUrl" Text="{Binding GitRemoteUrl}"  />
                 </StatusBarItem>
                 <Separator Grid.Column="3" />
+
                 <StatusBarItem Grid.Column="4">
+                    <TextBlock x:Name="Branch" Text="{Binding GitBranch}"  />
+                </StatusBarItem>
+
+                <Separator Grid.Column="5" />
+
+                <StatusBarItem Grid.Column="6">
                     <ProgressBar x:Name="ProcessProgessBar" Value="{Binding ProgressBarValue}" Width="90" Height="16" />
                 </StatusBarItem>
-                <StatusBarItem Grid.Column="4">
+                <StatusBarItem Grid.Column="6">
                     <TextBlock x:Name="GridRowCountTextBox" Margin="3,3,3,3" Text="{Binding ProgressBarStatusText}" />
                 </StatusBarItem>
             </StatusBar>

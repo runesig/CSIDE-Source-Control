@@ -32,6 +32,13 @@ namespace CSIDESourceControl.Client.Service
             MessageBox.Show(text, caption, MessageBoxButton.OK, MessageBoxImage.Error);
         }
 
+        public bool ShowConfirmMessage(string caption, string text)
+        {
+            MessageBoxResult result = MessageBox.Show(text, caption, MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.No);
+
+            return (result == MessageBoxResult.Yes);
+        }
+
         public bool ShowServerSettings(ref ServerSetupModel serverSetup)
         {
             ServerSetupDialogService dialogService = new ServerSetupDialogService();

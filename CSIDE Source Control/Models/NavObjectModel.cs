@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.Text.RegularExpressions;
 using CSIDESourceControl.Helpers;
 
 namespace CSIDESourceControl.Models
@@ -224,13 +225,18 @@ namespace CSIDESourceControl.Models
         {
             string internalId = string.Empty;
 
-            string[] fileSplit = filePath.Split('/');
+            string[] pathSplit = filePath.Split('/');
 
-            foreach (string filename in fileSplit)
+            foreach (string filename in pathSplit)
             {
                 if (filename.Contains(".txt"))
                 {
-                    internalId = filename.Replace(".txt", string.Empty).ToUpper();
+                    string[] fileSplit = filename.Split('-');
+
+                    if (fileSplit.Length >= 2)
+                    {
+                        internalId = string.Format("{0}-{1}", fileSplit[0], fileSplit[1]);
+                    }
                 }
             }
 
@@ -296,9 +302,15 @@ namespace CSIDESourceControl.Models
 
         public string GetFullPath(string path)
         {
-            return string.Format(@"{0}\{1}\{2}.txt", path, Type, InternalId);
+            return string.Format(@"{0}\{1}\{2}-{3}.txt", path, Type, InternalId, GetValidFileFormattedObjectName(Name));
         }
 
+        private string GetValidFileFormattedObjectName(string name)
+        {
+            Regex illegalInFileName = new Regex(string.Format("[{0}]", Regex.Escape(new string(Path.GetInvalidFileNameChars()))), RegexOptions.Compiled);
+
+            return illegalInFileName.Replace(name, "_");
+        }
         public string GetDirectoryPath(string path)
         {
             return string.Format(@"{0}\{1}", path, Type);

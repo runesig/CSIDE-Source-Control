@@ -14,6 +14,7 @@ namespace CSIDESourceControl.Client.Service
         event TimerElapsedEventHandler TimerElapsed;
         void ShowInformationMessage(string caption, string text);
         void ShowErrorMessage(string caption, string text);
+        bool ShowConfirmMessage(string caption, string text);
         bool OpenFile(ref string[] filePaths);
         bool GetFolder(string description, out string folderPath);
         bool SetRemote(out string remoteUrl);
